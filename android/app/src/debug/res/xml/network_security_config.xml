@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Debug builds talk to a Laravel server over plain HTTP, so cleartext is
+    permitted for every host in this build type only:
+
+      * 10.0.2.2  – the host machine as seen from the Android emulator
+      * 10.0.3.2  – the host machine as seen from Genymotion
+      * localhost / 127.0.0.1
+      * the LAN IP of the host machine, for a physical device on Wi-Fi
+
+    The release build does **not** include this file, so production traffic
+    must use HTTPS.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

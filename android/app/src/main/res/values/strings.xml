@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+        The OAuth web client id used by Google Sign-In on Android.
+
+        Replace the placeholder with the **web** OAuth client id from your
+        Google Cloud console (APIs & Services → Credentials → OAuth client ID
+        → Web application). It must be the *web* client, not the Android one.
+
+        Alternatively, skip this file entirely and pass the id at build time:
+            flutter run --dart-define=GOOGLE_SERVER_CLIENT_ID=xxx.apps.googleusercontent.com
+    -->
+    <string name="default_web_client_id" translatable="false">YOUR_WEB_CLIENT_ID</string>
+</resources>
