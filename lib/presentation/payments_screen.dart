@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/payment_method_model.dart';
 import '../../logic/auth_provider.dart';
@@ -73,6 +74,7 @@ class PaymentsScreen extends StatelessWidget {
       appBar: const CustomAppBar(
         title: AppStrings.paymentMethods,
         showCart: false,
+        fallbackRoute: AppRoutes.profilePath,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _add(context),

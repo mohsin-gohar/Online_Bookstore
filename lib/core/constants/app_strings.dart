@@ -1,4 +1,4 @@
-/// All user-facing strings for the **Folio** app live here.
+/// All user-facing strings for the **Book Store** app live here.
 ///
 /// Centralising copy keeps widgets free of hard-coded text and makes future
 /// localisation (e.g. wrapping these in `l10n`) a mechanical change.
@@ -6,9 +6,9 @@ class AppStrings {
   AppStrings._();
 
   // ── App ────────────────────────────────
-  static const String appName = 'Folio';
+  static const String appName = 'Book Store';
   static const String appTagline = 'Curated reads, delivered to your door.';
-  static const String appFailedToStart = 'Folio could not start';
+  static const String appFailedToStart = 'Book Store could not start';
 
   // ── Onboarding ─────────────────────────
   static const String onboardingTitle1 = 'A Library in Your Pocket';
@@ -47,11 +47,11 @@ class AppStrings {
   static const String createAccount = 'Create your account';
   static const String loginSubtitle = 'Sign in to pick up where you left off.';
   static const String registerSubtitle =
-      'Join Folio and start building your shelf.';
+      'Join Book Store and start building your shelf.';
   static const String resetSent = 'Password reset link sent. Check your inbox.';
   static const String orContinueWith = 'or continue with';
   static const String welcomeBackToast = 'Welcome back!';
-  static const String accountCreated = 'Account created. Welcome to Folio!';
+  static const String accountCreated = 'Account created. Welcome to Book Store!';
   static const String googleSignedIn = 'Signed in with Google';
   static const String backToLogin = 'Back to Login';
 

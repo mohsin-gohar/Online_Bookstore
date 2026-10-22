@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../data/models/book_model.dart';
+import 'book_cover_image.dart';
 
 /// Layout variants for [BookCard].
 enum BookCardLayout {
@@ -272,43 +272,19 @@ class _Cover extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
-    final image = book.coverImage.isEmpty
-        ? _placeholder(scheme)
-        : CachedNetworkImage(
-            imageUrl: book.coverImage,
-            fit: BoxFit.cover,
-            placeholder: (_, _) => _shimmer(context),
-            errorWidget: (_, _, _) => _placeholder(scheme),
-          );
-
-    return Hero(
-      tag: heroTag,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-        child: width == null || height == null
-            ? SizedBox.expand(child: image)
-            : SizedBox(width: width, height: height, child: image),
-      ),
+    final cover = BookCoverImage(
+      imageUrl: book.coverImage,
+      width: width,
+      height: height,
+      fit: BoxFit.cover,
+      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+      heroTag: heroTag,
     );
-  }
 
-  Widget _placeholder(ColorScheme scheme) {
-    return Container(
-      alignment: Alignment.center,
-      color: scheme.surfaceContainerHighest,
-      child: Icon(
-        Icons.menu_book_rounded,
-        size: 32,
-        color: scheme.onSurface.withValues(alpha: 0.35),
-      ),
-    );
-  }
-
-  Widget _shimmer(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Container(color: scheme.surfaceContainerHighest);
+    if (width == null || height == null) {
+      return SizedBox.expand(child: cover);
+    }
+    return cover;
   }
 }
 

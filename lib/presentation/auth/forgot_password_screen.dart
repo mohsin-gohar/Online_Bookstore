@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_navigation.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../core/utils/validators.dart';
 import '../../logic/auth_provider.dart';
@@ -60,7 +61,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: isBusy ? null : () => context.pop(),
+          onPressed: isBusy
+              ? null
+              : () => AppNavigator.popOrGo(context, AppRoutes.loginPath),
         ),
       ),
       body: SafeArea(
@@ -149,7 +152,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           CustomButton(
             label: 'Back to Login',
             variant: CustomButtonVariant.text,
-            onPressed: isBusy ? null : () => context.pop(),
+            onPressed: isBusy
+                ? null
+                : () => AppNavigator.popOrGo(context, AppRoutes.loginPath),
           ),
         ],
       ),
@@ -201,7 +206,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           textAlign: TextAlign.center,
         ),
         Gaps.xxl,
-        CustomButton(label: 'Back to Login', onPressed: () => context.pop()),
+        CustomButton(
+          label: 'Back to Login',
+          onPressed: () => AppNavigator.popOrGo(context, AppRoutes.loginPath),
+        ),
         Gaps.md,
         CustomButton(
           label: 'Resend Email',

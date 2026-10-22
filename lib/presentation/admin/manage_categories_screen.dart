@@ -5,10 +5,12 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/category_model.dart';
 import '../../data/repositories/category_repository.dart';
 import '../../logic/book_provider.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import 'widgets/category_form_sheet.dart';
 
@@ -89,7 +91,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     final state = books.categories;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.manageCategories)),
+      appBar: const CustomAppBar(
+        title: AppStrings.manageCategories,
+        showCart: false,
+        showHome: false,
+        fallbackRoute: AppRoutes.adminDashboardPath,
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _add,
         icon: const Icon(Icons.add_rounded),

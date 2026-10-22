@@ -30,7 +30,7 @@ class ApiConstants {
   /// Which backend the repositories talk to.
   static const String _modeDefine = String.fromEnvironment(
     'API_MODE',
-    defaultValue: 'live',
+    defaultValue: 'mock',
   );
 
   /// `true` → the bundled demo catalogue (no server required).

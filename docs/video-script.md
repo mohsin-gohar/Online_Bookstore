@@ -1,13 +1,13 @@
-# Folio — Video Demo Script
+# Book Store — Video Demo Script
 
-A **5–7 minute** walkthrough for demoing the Folio app. Each section lists the
+A **5–7 minute** walkthrough for demoing the Book Store app. Each section lists the
 **on-screen actions** and a **one-line voiceover** to read aloud. Timings are
 guidelines — adjust to your pace.
 
 > **Before you record:** log out or use a fresh install. The app runs on its
 > bundled demo catalogue by default, so no server is needed — the login screen
-> shows the two demo accounts (`reader@folio.app` / `password123` and
-> `admin@folio.app` / `admin123`). If you record against the live Laravel API
+> shows the two demo accounts (`reader@bookstore.app` / `password123` and
+> `admin@bookstore.app` / `admin123`). If you record against the live Laravel API
 > instead, make sure the catalogue is seeded (Admin → Seed Sample Data). Record
 > in portrait, on a real device or emulator.
 
@@ -16,7 +16,7 @@ guidelines — adjust to your pace.
 ### 0:00 – 0:15 · Intro
 
 **On screen:** App splash → onboarding.
-**Voiceover:** *"Hi, this is Folio — a Flutter mobile app for buying books, powered by a Laravel REST API, with a complete customer shopping flow and an admin panel."*
+**Voiceover:** *"Hi, this is Book Store — a Flutter mobile app for buying books, powered by a Laravel REST API, with a complete customer shopping flow and an admin panel."*
 
 ---
 
@@ -93,7 +93,7 @@ guidelines — adjust to your pace.
 ### 6:40 – 7:00 · Outro
 
 **On screen:** Return to the Home screen.
-**Voiceover:** *"That's Folio — a complete, end-to-end book shopping experience built with Flutter and a Laravel REST API. Thanks for watching."*
+**Voiceover:** *"That's Book Store — a complete, end-to-end book shopping experience built with Flutter and a Laravel REST API. Thanks for watching."*
 
 ---
 

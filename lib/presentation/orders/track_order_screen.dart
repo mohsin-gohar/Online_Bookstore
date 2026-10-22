@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/formatters.dart';
 import '../../data/models/order_model.dart';
 import '../../logic/order_provider.dart';
@@ -164,6 +166,12 @@ class _TrackBody extends StatelessWidget {
               ],
             ),
           ),
+        ),
+        Gaps.lg,
+        OutlinedButton.icon(
+          onPressed: () => context.go(AppRoutes.homePath),
+          icon: const Icon(Icons.home_outlined),
+          label: const Text('Back to Home'),
         ),
         Gaps.xxl,
       ],

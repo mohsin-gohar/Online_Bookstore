@@ -178,9 +178,7 @@ class AuthRepository {
   Future<UserModel> _consumeAuthResponse(ApiResponse response) async {
     final Map<String, dynamic> payload = response.map;
 
-    final String token = _stringOf(
-      payload['token'] ?? payload['access_token'],
-    );
+    final String token = _stringOf(payload['token'] ?? payload['access_token']);
     if (token.isEmpty) {
       throw const ServerException('The server did not return a session token.');
     }

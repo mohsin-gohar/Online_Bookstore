@@ -22,100 +22,142 @@ class OrderSuccessScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          tooltip: 'Back to Home',
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => context.go(AppRoutes.homePath),
+        ),
+        title: const Text('Order Confirmed'),
+      ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSizes.xl),
-          child: Column(
-            children: [
-              const Spacer(),
-              // Success check mark.
-              TweenAnimationBuilder<double>(
-                tween: Tween(begin: 0.6, end: 1),
-                duration: const Duration(milliseconds: 500),
-                curve: Curves.elasticOut,
-                builder: (context, scale, child) =>
-                    Transform.scale(scale: scale, child: child),
-                child: Container(
-                  height: 120,
-                  width: 120,
-                  decoration: BoxDecoration(
-                    color: AppColors.success.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.check_circle_rounded,
-                    size: 72,
-                    color: AppColors.success,
-                  ),
+        child: LayoutBuilder(
+          builder: (context, constraints) => SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSizes.xl),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: (constraints.maxHeight - AppSizes.xl * 2).clamp(
+                  0.0,
+                  double.infinity,
                 ),
               ),
-              Gaps.xl,
-              Text(
-                AppStrings.orderSuccess,
-                textAlign: TextAlign.center,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-              Gaps.xs,
-              Text(
-                'Thank you for your purchase. We\'ll email you updates as your '
-                'order progresses.',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium,
-              ),
-              if (order != null) ...[
-                Gaps.xl,
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AppSizes.md),
-                    child: Column(
-                      children: [
-                        _row(
-                          theme,
-                          AppStrings.orderId,
-                          Formatters.orderNumber(order!.id),
-                        ),
-                        Gaps.xs,
-                        _row(
-                          theme,
-                          AppStrings.total,
-                          Formatters.price(order!.total),
-                        ),
-                        if (order!.deliveryDate != null) ...[
-                          Gaps.xs,
-                          _row(
-                            theme,
-                            AppStrings.deliveryDate,
-                            Formatters.date(order!.deliveryDate!),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const SizedBox(height: AppSizes.sm),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Success check mark.
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.6, end: 1),
+                        duration: const Duration(milliseconds: 500),
+                        curve: Curves.elasticOut,
+                        builder: (context, scale, child) =>
+                            Transform.scale(scale: scale, child: child),
+                        child: Container(
+                          height: 104,
+                          width: 104,
+                          decoration: BoxDecoration(
+                            color: AppColors.success.withValues(alpha: 0.12),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(
+                            Icons.check_circle_rounded,
+                            size: 64,
+                            color: AppColors.success,
+                          ),
+                        ),
+                      ),
+                      Gaps.lg,
+                      Text(
+                        AppStrings.orderSuccess,
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      Gaps.xs,
+                      Text(
+                        'Thank you for your purchase. We\'ll email you updates as your '
+                        'order progresses.',
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                      if (order != null) ...[
+                        Gaps.lg,
+                        Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(AppSizes.md),
+                            child: Column(
+                              children: [
+                                _row(
+                                  theme,
+                                  AppStrings.orderId,
+                                  Formatters.orderNumber(order!.id),
+                                ),
+                                Gaps.xs,
+                                _row(
+                                  theme,
+                                  AppStrings.total,
+                                  Formatters.price(order!.total),
+                                ),
+                                if (order!.deliveryDate != null) ...[
+                                  Gaps.xs,
+                                  _row(
+                                    theme,
+                                    AppStrings.deliveryDate,
+                                    Formatters.date(order!.deliveryDate!),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: AppSizes.lg),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (order != null) ...[
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton.icon(
+                              onPressed: () => context.push(
+                                AppRoutes.orderDetails(order!.id),
+                              ),
+                              icon: const Icon(Icons.local_shipping_outlined),
+                              label: const Text(AppStrings.trackOrder),
+                            ),
+                          ),
+                          Gaps.sm,
                         ],
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => context.push(AppRoutes.ordersPath),
+                            icon: const Icon(Icons.receipt_long_outlined),
+                            label: const Text(AppStrings.orders),
+                          ),
+                        ),
+                        Gaps.sm,
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () => context.go(AppRoutes.homePath),
+                            icon: const Icon(Icons.home_outlined),
+                            label: const Text('Continue Shopping'),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                ),
-              ],
-              const Spacer(),
-              if (order != null)
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () => context.pushReplacement(
-                      AppRoutes.orderDetails(order!.id),
-                    ),
-                    icon: const Icon(Icons.local_shipping_outlined),
-                    label: const Text(AppStrings.trackOrder),
-                  ),
-                ),
-              Gaps.sm,
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => context.go(AppRoutes.homePath),
-                  child: const Text('Continue Shopping'),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

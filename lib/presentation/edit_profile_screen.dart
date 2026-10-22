@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_navigation.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../core/utils/validators.dart';
 import '../../logic/auth_provider.dart';
@@ -63,7 +64,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       );
       if (updated != null) auth.updateLocalUser(updated);
       SnackbarHelper.showSuccess(context, 'Profile updated');
-      context.pop();
+      AppNavigator.popOrGo(context, AppRoutes.profilePath);
     } else if (profile.error != null) {
       SnackbarHelper.showError(context, profile.error!);
     }
@@ -77,6 +78,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: const CustomAppBar(
         title: AppStrings.editProfile,
         showCart: false,
+        fallbackRoute: AppRoutes.profilePath,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSizes.md),

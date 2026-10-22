@@ -173,59 +173,65 @@ class _Slide extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSizes.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Book plate: cream card, brass hairline, tinted artwork.
-          Container(
-            height: 232,
-            width: 232,
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(AppSizes.radiusXl),
-              border: Border.all(color: AppColors.accent, width: 1.4),
-              boxShadow: AppSizes.softShadow,
-            ),
-            padding: const EdgeInsets.all(AppSizes.lg),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  height: 116,
-                  width: 116,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: <Color>[
-                        scheme.primary.withValues(alpha: 0.18),
-                        AppColors.accent.withValues(alpha: 0.20),
-                      ],
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSizes.xl,
+          vertical: AppSizes.md,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Book plate: cream card, brass hairline, tinted artwork.
+            Container(
+              height: 232,
+              width: 232,
+              decoration: BoxDecoration(
+                color: scheme.surface,
+                borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+                border: Border.all(color: AppColors.accent, width: 1.4),
+                boxShadow: AppSizes.softShadow,
+              ),
+              padding: const EdgeInsets.all(AppSizes.lg),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 116,
+                    width: 116,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: <Color>[
+                          scheme.primary.withValues(alpha: 0.18),
+                          AppColors.accent.withValues(alpha: 0.20),
+                        ],
+                      ),
                     ),
+                    child: Icon(page.icon, size: 54, color: scheme.primary),
                   ),
-                  child: Icon(page.icon, size: 54, color: scheme.primary),
-                ),
-                Gaps.md,
-                const BrassRule(width: 34, height: 2),
-              ],
+                  Gaps.md,
+                  const BrassRule(width: 34, height: 2),
+                ],
+              ),
             ),
-          ),
-          Gaps.xxl,
-          Text(
-            page.title,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall,
-          ),
-          Gaps.sm,
-          Text(
-            page.body,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyMedium,
-          ),
-        ],
+            Gaps.xxl,
+            Text(
+              page.title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.headlineSmall,
+            ),
+            Gaps.sm,
+            Text(
+              page.body,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyMedium,
+            ),
+          ],
+        ),
       ),
     );
   }

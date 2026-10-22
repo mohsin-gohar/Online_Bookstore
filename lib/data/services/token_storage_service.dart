@@ -33,7 +33,7 @@ class TokenStorageService {
   /// In-memory fallback used when the platform keystore is not available.
   final Map<String, String> _fallback = <String, String>{};
 
-  static const String _tokenKey = 'folio_api_token';
+  static const String _tokenKey = 'book_store_api_token';
 
   /// Reads the stored bearer token, or null when there is none.
   Future<String?> readToken() async {

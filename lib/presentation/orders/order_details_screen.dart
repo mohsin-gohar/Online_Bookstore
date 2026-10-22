@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +11,7 @@ import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/order_item_model.dart';
 import '../../data/models/order_model.dart';
 import '../../logic/order_provider.dart';
+import '../common_widgets/book_cover_image.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/error_state.dart';
 import 'widgets/order_invoice_dialog.dart';
@@ -266,6 +266,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               ),
             ),
           ],
+          Gaps.sm,
+          OutlinedButton.icon(
+            onPressed: () => context.go(AppRoutes.homePath),
+            icon: const Icon(Icons.home_outlined),
+            label: const Text('Back to Home'),
+          ),
           Gaps.xxl,
         ],
       ),
@@ -305,35 +311,17 @@ class _OrderItemRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     return Padding(
       padding: const EdgeInsets.all(AppSizes.md),
       child: Row(
         children: [
-          ClipRRect(
+          BookCoverImage(
+            imageUrl: item.coverImage,
+            title: item.title,
+            width: 44,
+            height: 64,
+            fit: BoxFit.cover,
             borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-            child: SizedBox(
-              width: 44,
-              height: 64,
-              child: item.coverImage.isEmpty
-                  ? Container(
-                      color: scheme.surfaceContainerHighest,
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        color: scheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: item.coverImage,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) =>
-                          Container(color: scheme.surfaceContainerHighest),
-                      errorWidget: (_, _, _) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: const Icon(Icons.broken_image_rounded),
-                      ),
-                    ),
-            ),
           ),
           Gaps.hSm,
           Expanded(

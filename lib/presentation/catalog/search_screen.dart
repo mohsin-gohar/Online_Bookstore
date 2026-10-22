@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_navigation.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/services/local_storage_service.dart';
 import '../../core/utils/snackbar_helper.dart';
@@ -162,6 +163,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+          tooltip: 'Back',
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => AppNavigator.popOrGo(context, AppRoutes.homePath),
+        ),
         titleSpacing: 0,
         title: Padding(
           padding: const EdgeInsets.only(right: 8),

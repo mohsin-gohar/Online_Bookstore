@@ -1,6 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- The app talks to the Laravel REST API over the network, so the
+         INTERNET permission is required in every build variant — not only in
+         debug/profile. Without it here, a release APK silently loses all
+         network access and every live-mode call fails. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
-        android:label="Folio"
+        android:label="Book Store"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

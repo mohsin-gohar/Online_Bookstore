@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 
-/// The **Folio** brand mark — a hand-drawn open book on a pine tile with a
+/// The **Book Store** brand mark — a hand-drawn open book on a pine tile with a
 /// brass foil band.
 ///
 /// This replaces the stock Material `menu_book_rounded` icon that earlier
@@ -32,7 +32,7 @@ class BrandMark extends StatelessWidget {
   }
 }
 
-/// The wordmark ("Folio") plus optional tagline, used on the splash screen
+/// The wordmark ("Book Store") plus optional tagline, used on the splash screen
 /// and the auth screens.
 class BrandWordmark extends StatelessWidget {
   const BrandWordmark({
@@ -61,7 +61,7 @@ class BrandWordmark extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(name ?? 'Folio', style: nameStyle),
+        Text(name ?? 'Book Store', style: nameStyle),
         if (tagline != null) ...[
           const SizedBox(height: 6),
           // A short brass rule under the wordmark — the "foil" detail.

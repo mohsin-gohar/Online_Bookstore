@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +11,7 @@ import '../../data/models/cart_item_model.dart';
 import '../../data/models/order_model.dart';
 import '../../logic/auth_provider.dart';
 import '../../logic/cart_provider.dart';
+import '../common_widgets/book_cover_image.dart';
 import '../common_widgets/empty_state.dart';
 
 /// The Cart / Your Bag screen matching Screen 4 in reference design.
@@ -128,30 +128,13 @@ class _CartRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Cover
-        ClipRRect(
+        BookCoverImage(
+          imageUrl: item.coverImage,
+          title: item.title,
+          width: 60,
+          height: 88,
+          fit: BoxFit.cover,
           borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-          child: SizedBox(
-            width: 60,
-            height: 88,
-            child: item.coverImage.isEmpty
-                ? Container(
-                    color: AppColors.darkSurfaceVariant,
-                    child: const Icon(
-                      Icons.menu_book_rounded,
-                      color: AppColors.accent,
-                    ),
-                  )
-                : CachedNetworkImage(
-                    imageUrl: item.coverImage,
-                    fit: BoxFit.cover,
-                    placeholder: (_, _) =>
-                        Container(color: AppColors.darkSurfaceVariant),
-                    errorWidget: (_, _, _) => Container(
-                      color: AppColors.darkSurfaceVariant,
-                      child: const Icon(Icons.broken_image_rounded),
-                    ),
-                  ),
-          ),
         ),
         Gaps.hMd,
 

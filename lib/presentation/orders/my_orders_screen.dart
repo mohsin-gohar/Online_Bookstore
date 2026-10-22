@@ -113,6 +113,15 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
                         padding: EdgeInsets.all(AppSizes.md),
                         child: Center(child: CircularProgressIndicator()),
                       ),
+                    Gaps.lg,
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton.icon(
+                        onPressed: () => context.go(AppRoutes.homePath),
+                        icon: const Icon(Icons.home_outlined),
+                        label: const Text('Back to Home'),
+                      ),
+                    ),
                   ],
                 ),
               ),

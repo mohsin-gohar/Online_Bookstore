@@ -6,6 +6,7 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_navigation.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../core/utils/validators.dart';
 import '../../logic/auth_provider.dart';
@@ -92,7 +93,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: isBusy ? null : () => context.pop(),
+          onPressed: isBusy
+              ? null
+              : () => AppNavigator.popOrGo(context, AppRoutes.loginPath),
         ),
       ),
       body: SafeArea(

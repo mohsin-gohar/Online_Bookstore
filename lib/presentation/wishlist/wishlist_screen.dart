@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +13,7 @@ import '../../logic/auth_provider.dart';
 import '../../logic/book_provider.dart';
 import '../../logic/cart_provider.dart';
 import '../../logic/wishlist_provider.dart';
+import '../common_widgets/book_cover_image.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 
@@ -121,37 +121,19 @@ class _WishlistRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
 
     return GestureDetector(
       onTap: () => context.push(AppRoutes.bookDetails(item.bookId)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          ClipRRect(
+          BookCoverImage(
+            imageUrl: item.coverImage,
+            title: item.title,
+            width: 64,
+            height: 96,
+            fit: BoxFit.cover,
             borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-            child: SizedBox(
-              width: 64,
-              height: 96,
-              child: item.coverImage.isEmpty
-                  ? Container(
-                      color: scheme.surfaceContainerHighest,
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        color: scheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: item.coverImage,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) =>
-                          Container(color: scheme.surfaceContainerHighest),
-                      errorWidget: (_, _, _) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: const Icon(Icons.broken_image_rounded),
-                      ),
-                    ),
-            ),
           ),
           Gaps.hSm,
           Expanded(

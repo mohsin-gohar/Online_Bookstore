@@ -115,6 +115,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundImage: user.photoUrl.isNotEmpty
                         ? CachedNetworkImageProvider(user.photoUrl)
                         : null,
+                    onBackgroundImageError: user.photoUrl.isNotEmpty
+                        ? (_, _) {}
+                        : null,
                     child: user.photoUrl.isEmpty
                         ? Text(
                             user.initial,
@@ -326,6 +329,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
+                    const Divider(height: 1),
+                    TextButton.icon(
+                      onPressed: () => context.push(AppRoutes.ordersPath),
+                      icon: const Icon(
+                        Icons.receipt_long_outlined,
+                        size: 18,
+                        color: AppColors.accent,
+                      ),
+                      label: const Text(
+                        'View All Orders',
+                        style: TextStyle(
+                          color: AppColors.accent,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -346,6 +365,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // ── Preferences / Settings Menu ──
           _MenuSection(
             children: [
+              _MenuItem(
+                icon: Icons.receipt_long_outlined,
+                title: AppStrings.orders,
+                trailing: '${orders.length}',
+                onTap: () => context.push(AppRoutes.ordersPath),
+              ),
+              _MenuItem(
+                icon: Icons.favorite_border_rounded,
+                title: AppStrings.wishlist,
+                trailing: '${wishlist.count}',
+                onTap: () => context.push(AppRoutes.wishlistPath),
+              ),
               _MenuItem(
                 icon: Icons.location_on_outlined,
                 title: AppStrings.addresses,

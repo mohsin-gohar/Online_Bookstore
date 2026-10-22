@@ -105,7 +105,7 @@ Future<void> settle(WidgetTester tester) async {
   }
 }
 
-/// Boots [FolioApp] against a fresh mock backend and in-memory preferences.
+/// Boots [BookStoreApp] against a fresh mock backend and in-memory preferences.
 Future<Widget> buildTestApp() async {
   final TokenStorageService tokens = TokenStorageService.inMemory();
   ApiFactory.overrideTokenStorage(tokens);
@@ -113,5 +113,5 @@ Future<Widget> buildTestApp() async {
 
   final LocalStorageService storage = await LocalStorageService.init();
 
-  return FolioApp(localStorage: storage);
+  return BookStoreApp(localStorage: storage);
 }

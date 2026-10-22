@@ -126,17 +126,27 @@ class _Avatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
 
+    final initial = name.trim().isNotEmpty
+        ? name.trim().characters.first.toUpperCase()
+        : '?';
+
     if (photoUrl.isNotEmpty) {
       return CircleAvatar(
         radius: 18,
         backgroundColor: scheme.surfaceContainerHighest,
         backgroundImage: CachedNetworkImageProvider(photoUrl),
+        onBackgroundImageError: (_, _) {},
+        child: Text(
+          initial,
+          style: TextStyle(
+            color: scheme.primary,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+          ),
+        ),
       );
     }
 
-    final initial = name.trim().isNotEmpty
-        ? name.trim().characters.first.toUpperCase()
-        : '?';
     return CircleAvatar(
       radius: 18,
       backgroundColor: scheme.primary.withValues(alpha: 0.15),

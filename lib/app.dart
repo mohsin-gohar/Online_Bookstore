@@ -31,7 +31,7 @@ import 'logic/theme_provider.dart';
 import 'logic/wishlist_provider.dart';
 import 'presentation/common_widgets/user_session_sync.dart';
 
-/// Root widget of the Folio app.
+/// Root widget of the Book Store app.
 ///
 /// Wires up:
 ///  • Global providers via [MultiProvider] (local storage + theme).
@@ -40,8 +40,8 @@ import 'presentation/common_widgets/user_session_sync.dart';
 ///
 /// The data layer talks to a single [ApiTransport]: the Laravel REST API, or
 /// the bundled in-memory mock (see `ApiConstants.useMockMode`).
-class FolioApp extends StatelessWidget {
-  const FolioApp({super.key, required this.localStorage});
+class BookStoreApp extends StatelessWidget {
+  const BookStoreApp({super.key, required this.localStorage});
 
   final LocalStorageService localStorage;
 

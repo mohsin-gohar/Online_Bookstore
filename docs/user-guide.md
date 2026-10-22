@@ -1,16 +1,16 @@
-# Folio — User Guide
+# Book Store — User Guide
 
-Welcome to **Folio**, a mobile shopping app for buying books. This guide walks
+Welcome to **Book Store**, a mobile shopping app for buying books. This guide walks
 you through everything a customer can do in the app, step by step, and answers
 the most common questions.
 
-> **App:** Folio · **Platforms:** Android & iOS · **Version:** 1.0.0
+> **App:** Book Store · **Platforms:** Android & iOS · **Version:** 1.0.0
 
 ---
 
 ## 1. Overview
 
-**Folio** is a Flutter mobile application that lets readers:
+**Book Store** is a Flutter mobile application that lets readers:
 
 - Browse a catalog of books organised by category (Fiction, Non-Fiction, Academic, Comics).
 - Search by title/author and filter by price, rating and availability.
@@ -29,7 +29,7 @@ The app has **two kinds of accounts**:
 
 The Admin Panel is only visible to accounts whose role is `admin`.
 
-### 1.1 Two ways to run Folio
+### 1.1 Two ways to run Book Store
 
 | Build | Where the data comes from | What you see |
 |---|---|---|
@@ -70,7 +70,7 @@ If you were already logged in, the app remembers you and takes you straight to H
 
 1. On the **Login** or **Register** screen, tap **Continue with Google**.
 2. Pick your Google account.
-3. Folio sends a Google **ID token** to the store's server, the server verifies it and signs you in. You land on the **Home** screen.
+3. Book Store sends a Google **ID token** to the store's server, the server verifies it and signs you in. You land on the **Home** screen.
 
 > The app never decides who you are — the **server** verifies the Google token
 > every time. If you see *"Google sign-in failed"*, the app was probably built
@@ -80,8 +80,8 @@ If you were already logged in, the app remembers you and takes you straight to H
 
 | Role | Email | Password |
 |---|---|---|
-| Customer | `reader@folio.app` | `password123` |
-| Admin | `admin@folio.app` | `admin123` |
+| Customer | `reader@bookstore.app` | `password123` |
+| Admin | `admin@bookstore.app` | `admin123` |
 
 They are printed on the Login screen in demo mode, so you can simply type them
 in. The demo customer already has a saved address and a saved card, so checkout
@@ -291,7 +291,7 @@ screen (and signing in takes you straight to the dashboard). The Admin Panel inc
 
 ## 10. Frequently Asked Questions (FAQ)
 
-**1. Is Folio free to use?**
+**1. Is Book Store free to use?**
 Yes. The app itself is free; you only "pay" for books during checkout (which is
 simulated in this demo build).
 

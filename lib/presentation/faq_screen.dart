@@ -6,6 +6,7 @@ import '../core/constants/app_sizes.dart';
 import '../core/utils/snackbar_helper.dart';
 import '../data/models/faq_model.dart';
 import '../data/repositories/support_repository.dart';
+import 'common_widgets/custom_appbar.dart';
 import 'common_widgets/loading_indicator.dart';
 
 /// Help Center & FAQ Screen.
@@ -80,100 +81,105 @@ class _FaqScreenState extends State<FaqScreen> {
     final formKey = GlobalKey<FormState>();
     bool sending = false;
 
-    await showDialog<void>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-          ),
-          title: const Row(
-            children: [
-              Icon(Icons.support_agent_rounded, color: AppColors.accent),
-              SizedBox(width: 8),
-              Text(
-                'Contact Support',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    try {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => StatefulBuilder(
+          builder: (context, setDialogState) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+            ),
+            title: const Row(
+              children: [
+                Icon(Icons.support_agent_rounded, color: AppColors.accent),
+                SizedBox(width: 8),
+                Text(
+                  'Contact Support',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            content: Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Have an issue with your order or account? Send us a message and our team will get back to you.',
+                      style: TextStyle(fontSize: 13, color: AppColors.grey400),
+                    ),
+                    const SizedBox(height: 16),
+                    TextFormField(
+                      controller: subjectCtrl,
+                      decoration: const InputDecoration(
+                        labelText: 'Subject',
+                        hintText: 'e.g. Order #104 tracking update',
+                        prefixIcon: Icon(Icons.subject_rounded),
+                      ),
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? 'Please enter a subject'
+                          : null,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: messageCtrl,
+                      maxLines: 4,
+                      decoration: const InputDecoration(
+                        labelText: 'Message',
+                        hintText: 'Describe how we can help you...',
+                      ),
+                      validator: (v) => (v == null || v.trim().length < 10)
+                          ? 'Please enter at least 10 characters'
+                          : null,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: sending ? null : () => Navigator.of(ctx).pop(),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: sending
+                    ? null
+                    : () async {
+                        if (!formKey.currentState!.validate()) return;
+                        setDialogState(() => sending = true);
+                        try {
+                          await ctx.read<SupportRepository>().sendMessage(
+                            subject: subjectCtrl.text,
+                            message: messageCtrl.text,
+                          );
+                          if (!ctx.mounted) return;
+                          Navigator.of(ctx).pop();
+                          SnackbarHelper.showSuccess(
+                            ctx,
+                            'Message sent! Our support team will assist you.',
+                          );
+                        } catch (e) {
+                          setDialogState(() => sending = false);
+                          SnackbarHelper.showError(ctx, e.toString());
+                        }
+                      },
+                child: sending
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Text('Send Message'),
               ),
             ],
           ),
-          content: Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Have an issue with your order or account? Send us a message and our team will get back to you.',
-                    style: TextStyle(fontSize: 13, color: AppColors.grey400),
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    controller: subjectCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Subject',
-                      hintText: 'e.g. Order #104 tracking update',
-                      prefixIcon: Icon(Icons.subject_rounded),
-                    ),
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? 'Please enter a subject'
-                        : null,
-                  ),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: messageCtrl,
-                    maxLines: 4,
-                    decoration: const InputDecoration(
-                      labelText: 'Message',
-                      hintText: 'Describe how we can help you...',
-                    ),
-                    validator: (v) => (v == null || v.trim().length < 10)
-                        ? 'Please enter at least 10 characters'
-                        : null,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: sending ? null : () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: sending
-                  ? null
-                  : () async {
-                      if (!formKey.currentState!.validate()) return;
-                      setDialogState(() => sending = true);
-                      try {
-                        await ctx.read<SupportRepository>().sendMessage(
-                          subject: subjectCtrl.text,
-                          message: messageCtrl.text,
-                        );
-                        if (!ctx.mounted) return;
-                        Navigator.of(ctx).pop();
-                        SnackbarHelper.showSuccess(
-                          ctx,
-                          'Message sent! Our support team will assist you.',
-                        );
-                      } catch (e) {
-                        setDialogState(() => sending = false);
-                        SnackbarHelper.showError(ctx, e.toString());
-                      }
-                    },
-              child: sending
-                  ? const SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Text('Send Message'),
-            ),
-          ],
         ),
-      ),
-    );
+      );
+    } finally {
+      subjectCtrl.dispose();
+      messageCtrl.dispose();
+    }
   }
 
   @override
@@ -181,13 +187,7 @@ class _FaqScreenState extends State<FaqScreen> {
     final categories = ['All', 'Orders', 'Shipping', 'Payment', 'Account'];
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Help & FAQs'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
+      appBar: const CustomAppBar(title: 'Help & FAQs', showCart: false),
       body: _loading
           ? const FullScreenLoader()
           : RefreshIndicator(

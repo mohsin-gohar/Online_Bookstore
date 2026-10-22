@@ -1,4 +1,4 @@
-# Folio — Developer Guide
+# Book Store — Developer Guide
 
 A Flutter + Laravel REST API bookstore app (Android & iOS). This document
 explains the architecture, folder structure, the REST data model, API
@@ -9,7 +9,7 @@ test it and how to extend it.
 
 ## 1. Project Overview & Tech Stack
 
-**Folio** is a mobile e-commerce application for buying books, with a complete
+**Book Store** is a mobile e-commerce application for buying books, with a complete
 customer shopping flow (browse → cart → checkout → order tracking) and a full
 admin panel (manage books, categories, orders and users).
 
@@ -28,7 +28,7 @@ admin panel (manage books, categories, orders and users).
 | Bundled backend | `lib/data/mock/` | An in-memory implementation of the API contract |
 | Dev tooling | `flutter_test`, `flutter_lints` | Tests and static analysis |
 
-**Version:** 1.0.0+1 · **App name:** Folio
+**Version:** 1.0.0+1 · **App name:** Book Store
 
 ### Key dependencies (from `pubspec.yaml`)
 
@@ -171,7 +171,7 @@ Start the Laravel server, then run the app with the mode and the base URL:
 
 ```bash
 # Terminal 1 — the API
-cd ../folio-api
+cd ../bookstore-api
 php artisan serve --host=0.0.0.0 --port=8000
 
 # Terminal 2 — the app
@@ -257,12 +257,12 @@ receives.
   manifest and the debug-only resource are merged together in debug builds,
   so cleartext HTTP is permitted there and only there — the release build
   contains neither of them.
-- The app label is `Folio`
+- The app label is `Book Store`
   (`android/app/src/main/AndroidManifest.xml`).
 
 ### 3.7 iOS notes
 
-- `CFBundleDisplayName` is `Folio` (`ios/Runner/Info.plist`).
+- `CFBundleDisplayName` is `Book Store` (`ios/Runner/Info.plist`).
 - Add the Google URL scheme as described in §3.5 if you use Google sign-in.
 - On the simulator, `127.0.0.1` reaches the Mac's `localhost`, so
   `http://127.0.0.1:8000/api` works out of the box. For a physical device, use
@@ -275,8 +275,8 @@ them while running in mock mode:
 
 | Role | Email | Password |
 |---|---|---|
-| Customer | `reader@folio.app` | `password123` |
-| Admin | `admin@folio.app` | `admin123` |
+| Customer | `reader@bookstore.app` | `password123` |
+| Admin | `admin@bookstore.app` | `admin123` |
 
 The demo customer starts with a saved address and a saved card, so checkout can
 be walked straight through.

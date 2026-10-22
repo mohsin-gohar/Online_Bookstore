@@ -4,11 +4,13 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/order_model.dart';
 import '../../data/models/order_status.dart';
 import '../../logic/order_provider.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import '../orders/widgets/order_status_chip.dart';
 
@@ -95,7 +97,12 @@ class _ManageOrdersScreenState extends State<ManageOrdersScreen> {
     final list = orders.adminOrders;
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.manageOrders)),
+      appBar: const CustomAppBar(
+        title: AppStrings.manageOrders,
+        showCart: false,
+        showHome: false,
+        fallbackRoute: AppRoutes.adminDashboardPath,
+      ),
       body: Column(
         children: [
           // ── Status filter chips ──

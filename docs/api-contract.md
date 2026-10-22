@@ -1,4 +1,4 @@
-# Folio — Laravel API Contract
+# Book Store — Laravel API Contract
 
 **Version 1.0** · This document is the contract the Flutter client is written
 against. It is the single source of truth for what the Laravel backend must

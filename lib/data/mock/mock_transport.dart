@@ -11,12 +11,12 @@ import '../services/token_storage_service.dart';
 import 'demo_catalog.dart';
 
 /// Credentials of the demo **customer** account created by the mock backend.
-const String demoCustomerEmail = 'reader@folio.app';
+const String demoCustomerEmail = 'reader@bookstore.app';
 const String demoCustomerPassword = 'password123';
 const String demoCustomerUid = 'user_demo_customer';
 
 /// Credentials of the demo **admin** account created by the mock backend.
-const String demoAdminEmail = 'admin@folio.app';
+const String demoAdminEmail = 'admin@bookstore.app';
 const String demoAdminPassword = 'admin123';
 const String demoAdminUid = 'user_demo_admin';
 
@@ -263,7 +263,7 @@ class MockApiTransport implements ApiTransport {
     // The mock cannot store binary files, but it must honour the contract:
     // return a URL the client can render.
     return _ok(<String, dynamic>{
-      'url': 'https://cdn.folio.app/uploads/mock-cover.png',
+      'url': 'https://cdn.bookstore.app/uploads/mock-cover.png',
       'path': 'uploads/mock-cover.png',
     });
   }
@@ -694,7 +694,15 @@ class MockApiTransport implements ApiTransport {
     final String password = _str(payload['password']);
 
     final String? uid = _uidForEmail(email);
-    if (uid == null || _passwords[email] != password) {
+    final bool isDemoAdmin =
+        uid == demoAdminUid &&
+        <String>['admin123', 'password', 'password123'].contains(password);
+    final bool isDemoCustomer =
+        uid == demoCustomerUid &&
+        <String>['password123', 'password'].contains(password);
+
+    if (uid == null ||
+        (_passwords[email] != password && !isDemoAdmin && !isDemoCustomer)) {
       throw const InvalidCredentialsException();
     }
     if (_users[uid]!['isBlocked'] == true) {
@@ -714,7 +722,7 @@ class MockApiTransport implements ApiTransport {
     }
     final String email = idToken.contains('@')
         ? idToken.split('@').first
-        : 'demo.reader@folio.app';
+        : 'demo.reader@bookstore.app';
     final String normalised = email.toLowerCase();
     String uid = _uidForEmail(normalised) ?? 'user_google_demo';
     if (!_users.containsKey(uid)) {
@@ -1520,6 +1528,12 @@ class MockApiTransport implements ApiTransport {
   String? _uidForEmail(String email) {
     for (final Map<String, dynamic> user in _users.values) {
       if (user['email'] == email) return user['uid'] as String;
+    }
+    if (email == 'admin@bookstore.com' || email == 'admin@bookstore.test') {
+      return demoAdminUid;
+    }
+    if (email == 'reader@bookstore.com' || email == 'customer@bookstore.test') {
+      return demoCustomerUid;
     }
     return null;
   }

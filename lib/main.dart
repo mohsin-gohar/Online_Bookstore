@@ -21,7 +21,7 @@ Future<void> main() async {
 
   try {
     final localStorage = await LocalStorageService.init();
-    runApp(FolioApp(localStorage: localStorage));
+    runApp(BookStoreApp(localStorage: localStorage));
   } catch (error, stack) {
     debugPrint('Bootstrap failed: $error\n$stack');
     runApp(const _BootstrapErrorApp());

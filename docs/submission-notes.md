@@ -1,9 +1,9 @@
-# Folio — Submission Notes
+# Book Store — Submission Notes
 
 Submission checklist, backend setup instructions and demo credentials for the
-Folio project.
+Book Store project.
 
-**Project:** Folio (Flutter + Laravel REST API) · **Version:** 1.0.0
+**Project:** Book Store (Flutter + Laravel REST API) · **Version:** 1.0.0
 
 > Replace every `<PLACEHOLDER>` below with your real values before submitting.
 
@@ -66,7 +66,7 @@ against it — while you build the real server.
 ### 2.2 Running the server locally
 
 ```bash
-cd folio-api
+cd bookstore-api
 composer install
 cp .env.example .env
 php artisan key:generate
@@ -92,10 +92,10 @@ The backend uses a relational database, so a plain SQL dump is the export:
 
 ```bash
 # Export
-mysqldump -u <DB_USER> -p <DB_NAME> > database-backup/folio.sql
+mysqldump -u <DB_USER> -p <DB_NAME> > database-backup/bookstore.sql
 
 # Restore
-mysql -u <DB_USER> -p <DB_NAME> < database-backup/folio.sql
+mysql -u <DB_USER> -p <DB_NAME> < database-backup/bookstore.sql
 ```
 
 Also include a `database-backup/README.txt` stating the export date, the
@@ -120,14 +120,14 @@ Use dedicated demo accounts (never a real personal account).
 | Field | Value |
 |-------|-------|
 | Role | `admin` |
-| Email | `admin@folio.app` |
+| Email | `admin@bookstore.app` |
 | Password | `admin123` |
 
 ### Normal (customer) account
 | Field | Value |
 |-------|-------|
 | Role | `customer` |
-| Email | `reader@folio.app` |
+| Email | `reader@bookstore.app` |
 | Password | `password123` |
 
 > These two accounts are created by the bundled demo backend, so they work out
@@ -158,8 +158,8 @@ Batch/Group/Project-Title
 Examples:
 
 ```
-Batch7/Group3/Folio-Flutter-Laravel-App
-Batch07/Group-02/Folio
+Batch7/Group3/Book-Store-Flutter-Laravel-App
+Batch07/Group-02/Book-Store
 ```
 
 **Rules:**
@@ -168,7 +168,7 @@ Batch07/Group-02/Folio
 - Recommended internal structure:
 
 ```
-Batch7-Group3-Folio/
+Batch7-Group3-Book-Store/
 ├── README.md
 ├── docs/
 │   ├── user-guide.md
@@ -177,7 +177,7 @@ Batch7-Group3-Folio/
 │   └── video-script.md
 ├── database-backup/
 │   ├── README.txt
-│   └── folio.sql
+│   └── bookstore.sql
 ├── lib/                # full source
 ├── android/
 ├── ios/

@@ -6,11 +6,15 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/routes/app_routes.dart';
+import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/author_model.dart';
 import '../../data/models/book_model.dart';
 import '../../data/repositories/author_repository.dart';
 import '../../data/repositories/book_repository.dart';
+import '../../logic/auth_provider.dart';
+import '../../logic/wishlist_provider.dart';
 import '../common_widgets/book_card.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import '../common_widgets/loading_indicator.dart';
 
@@ -88,7 +92,7 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
             AuthorModel(
               id: widget.authorId ?? '',
               name: widget.authorName,
-              bio: 'Acclaimed author published in the Folio collection.',
+              bio: 'Acclaimed author published in the Book Store collection.',
               bookCount: books.length,
             );
         _books = books;
@@ -103,16 +107,31 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
     }
   }
 
+  Future<void> _toggleWishlist(BookModel book) async {
+    if (!context.read<AuthProvider>().isAuthenticated) {
+      SnackbarHelper.showWarning(context, 'Please log in to save books.');
+      return;
+    }
+    final wishlist = context.read<WishlistProvider>();
+    final wasSaved = wishlist.contains(book.id);
+    final ok = await wishlist.toggle(book);
+    if (!mounted) return;
+    if (ok) {
+      SnackbarHelper.showSuccess(
+        context,
+        wasSaved ? 'Removed from wishlist' : 'Added to wishlist',
+      );
+    } else if (wishlist.error != null) {
+      SnackbarHelper.showError(context, wishlist.error!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final wishlist = context.watch<WishlistProvider>();
+
     return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(widget.authorName),
-      ),
+      appBar: CustomAppBar(title: widget.authorName),
       body: _loading
           ? const FullScreenLoader()
           : _error != null
@@ -166,6 +185,10 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                             backgroundImage:
                                 _author?.photoUrl.isNotEmpty == true
                                 ? CachedNetworkImageProvider(_author!.photoUrl)
+                                : null,
+                            onBackgroundImageError:
+                                _author?.photoUrl.isNotEmpty == true
+                                ? (_, _) {}
                                 : null,
                             child: _author?.photoUrl.isEmpty != false
                                 ? Text(
@@ -264,8 +287,11 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                         final book = _books[index];
                         return BookCard(
                           book: book,
+                          width: double.infinity,
+                          isWishlisted: wishlist.contains(book.id),
                           onTap: () =>
                               context.push(AppRoutes.bookDetails(book.id)),
+                          onToggleWishlist: () => _toggleWishlist(book),
                         );
                       },
                     ),

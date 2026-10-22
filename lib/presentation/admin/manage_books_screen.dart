@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,11 +5,13 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_navigation.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/book_model.dart';
 import '../../data/repositories/book_repository.dart';
 import '../../logic/book_provider.dart';
+import '../common_widgets/book_cover_image.dart';
 import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import '../common_widgets/error_state.dart';
@@ -160,6 +161,8 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
         title: AppStrings.manageBooks,
         showBack: true,
         showCart: false,
+        showHome: false,
+        fallbackRoute: AppRoutes.adminDashboardPath,
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _add,
@@ -245,35 +248,18 @@ class _BookRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSizes.sm),
       child: Row(
         children: [
-          ClipRRect(
+          BookCoverImage(
+            imageUrl: book.coverImage,
+            title: book.title,
+            author: book.author,
+            width: 44,
+            height: 64,
+            fit: BoxFit.cover,
             borderRadius: BorderRadius.circular(AppSizes.radiusSm),
-            child: SizedBox(
-              width: 44,
-              height: 64,
-              child: book.coverImage.isEmpty
-                  ? Container(
-                      color: scheme.surfaceContainerHighest,
-                      child: Icon(
-                        Icons.menu_book_rounded,
-                        color: scheme.onSurface.withValues(alpha: 0.3),
-                      ),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: book.coverImage,
-                      fit: BoxFit.cover,
-                      placeholder: (_, _) =>
-                          Container(color: scheme.surfaceContainerHighest),
-                      errorWidget: (_, _, _) => Container(
-                        color: scheme.surfaceContainerHighest,
-                        child: const Icon(Icons.broken_image_rounded),
-                      ),
-                    ),
-            ),
           ),
           Gaps.hSm,
           Expanded(

@@ -1,4 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'dart:async';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -16,8 +18,10 @@ import '../../../logic/book_provider.dart';
 import '../../../logic/cart_provider.dart';
 import '../../../logic/notification_provider.dart';
 import '../../../logic/wishlist_provider.dart';
+import '../book_details/widgets/audio_sample_sheet.dart';
 import '../book_details/widgets/book_sample_reader_sheet.dart';
 import '../common_widgets/book_card.dart';
+import '../common_widgets/book_cover_image.dart';
 import '../common_widgets/empty_state.dart';
 import '../common_widgets/section_header.dart';
 import '../common_widgets/shimmer_skeleton.dart';
@@ -94,9 +98,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final bestsellers = books.bestsellers.data ?? [];
     final newArrivals = books.newArrivals.data ?? [];
-    final featuredBook = bestsellers.isNotEmpty
-        ? bestsellers.first
-        : (newArrivals.isNotEmpty ? newArrivals.first : null);
+    final allLoadedBooks = <BookModel>{...bestsellers, ...newArrivals}.toList();
+    final featuredBook = allLoadedBooks.isNotEmpty
+        ? allLoadedBooks.first
+        : null;
+    final dealBook = allLoadedBooks.length > 1
+        ? allLoadedBooks[1]
+        : featuredBook;
+    final editorsPicks = allLoadedBooks.length > 3
+        ? allLoadedBooks.sublist(2, min(allLoadedBooks.length, 8))
+        : allLoadedBooks;
+    final trendingBooks = allLoadedBooks.length > 4
+        ? allLoadedBooks.sublist(min(3, allLoadedBooks.length))
+        : allLoadedBooks;
+    final audioBooks = allLoadedBooks.reversed.take(6).toList();
 
     return Scaffold(
       body: RefreshIndicator(
@@ -236,7 +251,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.lg),
 
-            // ── Genre / Category Pills ──
+            // ── Section 2: Genre / Category Explorer Pills ──
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
@@ -287,7 +302,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.lg),
 
-            // ── Top 10 Bestsellers (Ranked Badges) ──
+            // ── Section 3: Flash Deal of the Day (Live Countdown & 35% OFF) ──
+            if (dealBook != null) ...[
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+                  child: _DealOfTheDayCard(
+                    book: dealBook,
+                    onTap: () => _openBook(dealBook),
+                    onAddToBag: _addToBag,
+                  ),
+                ),
+              ),
+              const SliverToBoxAdapter(child: Gaps.lg),
+            ],
+
+            // ── Section 4: Top 10 Ranked Bestsellers ──
             SliverToBoxAdapter(
               child: SectionHeader(
                 title: 'Top Bestsellers',
@@ -305,7 +335,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.lg),
 
-            // ── Limited-Time Promo Banner ──
+            // ── Section 5: Editor’s Handpicked Staff Picks ──
+            if (editorsPicks.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: SectionHeader(
+                  title: 'Editor’s Choice',
+                  actionLabel: 'Explore All',
+                  onAction: () => context.go(AppRoutes.catalogPath),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _EditorsPicksSection(
+                  books: editorsPicks,
+                  onBookTap: _openBook,
+                  onReadSample: (b) => BookSampleReaderSheet.show(context, b),
+                ),
+              ),
+              const SliverToBoxAdapter(child: Gaps.lg),
+            ],
+
+            // ── Section 6: Limited-Time Promo Voucher Banner ──
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
@@ -322,7 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.lg),
 
-            // ── New Arrivals & Fresh Releases ──
+            // ── Section 7: New Arrivals & Fresh Releases ──
             SliverToBoxAdapter(
               child: SectionHeader(
                 title: AppStrings.newArrivals,
@@ -340,7 +389,44 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.lg),
 
-            // ── Featured Authors Spotlight ──
+            // ── Section 8: Trending Now & Highly Rated ──
+            if (trendingBooks.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: SectionHeader(
+                  title: 'Trending & Highly Rated',
+                  actionLabel: AppStrings.seeAll,
+                  onAction: () => context.go(AppRoutes.catalogPath),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _TrendingGridSection(
+                  books: trendingBooks,
+                  onBookTap: _openBook,
+                  onAddToBag: _addToBag,
+                ),
+              ),
+              const SliverToBoxAdapter(child: Gaps.lg),
+            ],
+
+            // ── Section 9: Audiobooks & Audio Previews ──
+            if (audioBooks.isNotEmpty) ...[
+              SliverToBoxAdapter(
+                child: SectionHeader(
+                  title: 'Audiobooks & Audio Samples',
+                  actionLabel: 'Listen All',
+                  onAction: () => context.go(AppRoutes.catalogPath),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: _AudiobooksSpotlightSection(
+                  books: audioBooks,
+                  onPreviewAudio: (b) => AudioSampleSheet.show(context, b),
+                ),
+              ),
+              const SliverToBoxAdapter(child: Gaps.lg),
+            ],
+
+            // ── Section 10: Featured Literary Authors ──
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
@@ -369,7 +455,48 @@ class _HomeScreenState extends State<HomeScreen> {
 
             const SliverToBoxAdapter(child: Gaps.xl),
 
-            // ── Trust & Quality Guarantee Badges ──
+            // ── Section 11: Reader Stories & Verified Reviews Carousel ──
+            const SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  AppSizes.md,
+                  0,
+                  AppSizes.md,
+                  AppSizes.sm,
+                ),
+                child: Text(
+                  'VERIFIED READER EXPERIENCES',
+                  style: TextStyle(
+                    color: AppColors.accent,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+            ),
+            const SliverToBoxAdapter(child: _ReaderReviewsCarousel()),
+
+            const SliverToBoxAdapter(child: Gaps.xl),
+
+            // ── Section 12: VIP Readers Club & Membership Banner ──
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+                child: _BookClubBanner(
+                  onJoin: () {
+                    SnackbarHelper.showSuccess(
+                      context,
+                      'Welcome to Book Store VIP Club! 15% discount applied.',
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            const SliverToBoxAdapter(child: Gaps.xl),
+
+            // ── Section 13: Trust & Quality Guarantee Badges ──
             const SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: AppSizes.md),
@@ -439,41 +566,14 @@ class _HeroBookSpotlight extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: ClipRRect(
+                child: BookCoverImage(
+                  imageUrl: book.coverImage,
+                  title: book.title,
+                  author: book.author,
+                  width: 95,
+                  height: 140,
+                  fit: BoxFit.cover,
                   borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                  child: book.coverImage.isNotEmpty
-                      ? CachedNetworkImage(
-                          imageUrl: book.coverImage,
-                          width: 95,
-                          height: 140,
-                          fit: BoxFit.cover,
-                          placeholder: (_, _) => Container(
-                            width: 95,
-                            height: 140,
-                            color: AppColors.darkSurfaceVariant,
-                            child: const Center(
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          ),
-                          errorWidget: (_, _, _) => Container(
-                            width: 95,
-                            height: 140,
-                            color: AppColors.darkSurfaceVariant,
-                            child: const Icon(
-                              Icons.menu_book_rounded,
-                              color: AppColors.accent,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          width: 95,
-                          height: 140,
-                          color: AppColors.darkSurfaceVariant,
-                          child: const Icon(
-                            Icons.menu_book_rounded,
-                            color: AppColors.accent,
-                          ),
-                        ),
                 ),
               ),
             ),
@@ -788,32 +888,16 @@ class _RankedBestsellersRail extends StatelessWidget {
                             ),
                           ],
                         ),
-                        child: ClipRRect(
+                        child: BookCoverImage(
+                          imageUrl: book.coverImage,
+                          title: book.title,
+                          author: book.author,
+                          width: 145,
+                          height: 200,
+                          fit: BoxFit.cover,
                           borderRadius: BorderRadius.circular(
                             AppSizes.radiusMd,
                           ),
-                          child: book.coverImage.isNotEmpty
-                              ? CachedNetworkImage(
-                                  imageUrl: book.coverImage,
-                                  fit: BoxFit.cover,
-                                  placeholder: (_, _) => Container(
-                                    color: AppColors.darkSurfaceVariant,
-                                  ),
-                                  errorWidget: (_, _, _) => Container(
-                                    color: AppColors.darkSurfaceVariant,
-                                    child: const Icon(
-                                      Icons.book_rounded,
-                                      color: AppColors.accent,
-                                    ),
-                                  ),
-                                )
-                              : Container(
-                                  color: AppColors.darkSurfaceVariant,
-                                  child: const Icon(
-                                    Icons.book_rounded,
-                                    color: AppColors.accent,
-                                  ),
-                                ),
                         ),
                       ),
                       // Rank number badge
@@ -1234,6 +1318,967 @@ class _BadgeItem extends StatelessWidget {
           style: const TextStyle(fontSize: 9, color: AppColors.grey400),
         ),
       ],
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 8. Deal of the Day Spotlight (Flash Countdown)
+// ──────────────────────────────────────────────
+class _DealOfTheDayCard extends StatefulWidget {
+  const _DealOfTheDayCard({
+    required this.book,
+    required this.onTap,
+    required this.onAddToBag,
+  });
+
+  final BookModel book;
+  final VoidCallback onTap;
+  final ValueChanged<BookModel> onAddToBag;
+
+  @override
+  State<_DealOfTheDayCard> createState() => _DealOfTheDayCardState();
+}
+
+class _DealOfTheDayCardState extends State<_DealOfTheDayCard> {
+  int _secondsLeft = 5 * 3600 + 24 * 60 + 18;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_secondsLeft > 0 && mounted) {
+        setState(() => _secondsLeft--);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  String _formatTime() {
+    final hours = (_secondsLeft ~/ 3600).toString().padLeft(2, '0');
+    final minutes = ((_secondsLeft % 3600) ~/ 60).toString().padLeft(2, '0');
+    final seconds = (_secondsLeft % 60).toString().padLeft(2, '0');
+    return '$hours : $minutes : $seconds';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final book = widget.book;
+    final originalPrice = (book.price * 1.35).toStringAsFixed(2);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF22150A), Color(0xFF100904)],
+        ),
+        borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.5),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.35),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(AppSizes.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header: Tag + Live Countdown
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: AppColors.terracotta,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusSm),
+                ),
+                child: const Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.bolt_rounded, size: 14, color: Colors.white),
+                    SizedBox(width: 3),
+                    Text(
+                      'DEAL OF THE DAY · 35% OFF',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: Colors.black45,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+                  border: Border.all(
+                    color: AppColors.accent.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.timer_outlined,
+                      size: 13,
+                      color: AppColors.accent,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      _formatTime(),
+                      style: const TextStyle(
+                        fontFamily: 'Courier',
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Gaps.md,
+          // Book preview row
+          Row(
+            children: [
+              GestureDetector(
+                onTap: widget.onTap,
+                child: BookCoverImage(
+                  imageUrl: book.coverImage,
+                  title: book.title,
+                  author: book.author,
+                  width: 85,
+                  height: 125,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                ),
+              ),
+              Gaps.hMd,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      book.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: 'Georgia',
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'by ${book.author}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.white.withValues(alpha: 0.7),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text(
+                          book.priceLabel,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.accent,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '\$$originalPrice',
+                          style: TextStyle(
+                            fontSize: 12,
+                            decoration: TextDecoration.lineThrough,
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    // Scarcity bar
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(3),
+                            child: const LinearProgressIndicator(
+                              value: 0.25,
+                              minHeight: 5,
+                              backgroundColor: Colors.white12,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppColors.terracotta,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text(
+                          'Only 3 left!',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: AppColors.terracotta,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: () => widget.onAddToBag(book),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.accent,
+                        foregroundColor: AppColors.brandDark,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
+                        minimumSize: const Size(0, 32),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusPill,
+                          ),
+                        ),
+                      ),
+                      icon: const Icon(Icons.flash_on_rounded, size: 14),
+                      label: const Text(
+                        'Claim Deal',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 9. Editor's Choice Section
+// ──────────────────────────────────────────────
+class _EditorsPicksSection extends StatelessWidget {
+  const _EditorsPicksSection({
+    required this.books,
+    required this.onBookTap,
+    required this.onReadSample,
+  });
+
+  final List<BookModel> books;
+  final ValueChanged<BookModel> onBookTap;
+  final ValueChanged<BookModel> onReadSample;
+
+  @override
+  Widget build(BuildContext context) {
+    if (books.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 155,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+        scrollDirection: Axis.horizontal,
+        itemCount: books.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (context, i) {
+          final book = books[i];
+          return Container(
+            width: 290,
+            padding: const EdgeInsets.all(AppSizes.sm + 2),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardTheme.color,
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => onBookTap(book),
+                  child: BookCoverImage(
+                    imageUrl: book.coverImage,
+                    title: book.title,
+                    author: book.author,
+                    width: 78,
+                    height: 118,
+                    fit: BoxFit.cover,
+                    borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.terracotta.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: const Text(
+                          'BOOK STORE CURATION',
+                          style: TextStyle(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.terracotta,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        book.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Georgia',
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                          height: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        'by ${book.author}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Text(
+                            book.priceLabel,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.accent,
+                            ),
+                          ),
+                          const Spacer(),
+                          TextButton(
+                            onPressed: () => onReadSample(book),
+                            style: TextButton.styleFrom(
+                              visualDensity: VisualDensity.compact,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              foregroundColor: AppColors.accent,
+                            ),
+                            child: const Text(
+                              'Sample →',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 10. Trending & Highly Rated Section
+// ──────────────────────────────────────────────
+class _TrendingGridSection extends StatelessWidget {
+  const _TrendingGridSection({
+    required this.books,
+    required this.onBookTap,
+    required this.onAddToBag,
+  });
+
+  final List<BookModel> books;
+  final ValueChanged<BookModel> onBookTap;
+  final ValueChanged<BookModel> onAddToBag;
+
+  @override
+  Widget build(BuildContext context) {
+    if (books.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 275,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+        scrollDirection: Axis.horizontal,
+        itemCount: books.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, i) {
+          final book = books[i];
+          return GestureDetector(
+            onTap: () => onBookTap(book),
+            child: Container(
+              width: 140,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardTheme.color,
+                borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withValues(alpha: 0.12),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Stack(
+                    children: [
+                      BookCoverImage(
+                        imageUrl: book.coverImage,
+                        title: book.title,
+                        author: book.author,
+                        width: 140,
+                        height: 180,
+                        fit: BoxFit.cover,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(AppSizes.radiusMd),
+                        ),
+                      ),
+                      Positioned(
+                        top: 6,
+                        left: 6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 5,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.75),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.star_rounded,
+                                size: 12,
+                                color: AppColors.accent,
+                              ),
+                              const SizedBox(width: 2),
+                              Text(
+                                book.ratingLabel,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          book.title,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          book.author,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              book.priceLabel,
+                              style: const TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w800,
+                                color: AppColors.accent,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () => onAddToBag(book),
+                              borderRadius: BorderRadius.circular(12),
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accent.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.add,
+                                  size: 14,
+                                  color: AppColors.accent,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 11. Audiobooks & Audio Previews Section
+// ──────────────────────────────────────────────
+class _AudiobooksSpotlightSection extends StatelessWidget {
+  const _AudiobooksSpotlightSection({
+    required this.books,
+    required this.onPreviewAudio,
+  });
+
+  final List<BookModel> books;
+  final ValueChanged<BookModel> onPreviewAudio;
+
+  @override
+  Widget build(BuildContext context) {
+    if (books.isEmpty) return const SizedBox.shrink();
+
+    return SizedBox(
+      height: 155,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+        scrollDirection: Axis.horizontal,
+        itemCount: books.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 14),
+        itemBuilder: (context, i) {
+          final book = books[i];
+          final durations = [
+            '7h 45m',
+            '9h 12m',
+            '6h 30m',
+            '11h 05m',
+            '8h 22m',
+            '10h 15m',
+          ];
+          final duration = durations[i % durations.length];
+
+          return Container(
+            width: 250,
+            padding: const EdgeInsets.all(AppSizes.sm + 2),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF161F38), Color(0xFF0D1322)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    BookCoverImage(
+                      imageUrl: book.coverImage,
+                      title: book.title,
+                      author: book.author,
+                      width: 75,
+                      height: 105,
+                      fit: BoxFit.cover,
+                      icon: Icons.headphones_rounded,
+                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.65),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.accent, width: 1.2),
+                      ),
+                      child: const Icon(
+                        Icons.headphones_rounded,
+                        color: AppColors.accent,
+                        size: 18,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.accent.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                        child: const Text(
+                          '🎧 AUDIO EDITION',
+                          style: TextStyle(
+                            fontSize: 8,
+                            fontWeight: FontWeight.w900,
+                            color: AppColors.accent,
+                            letterSpacing: 0.6,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        book.title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        duration,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.grey400,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      ElevatedButton.icon(
+                        onPressed: () => onPreviewAudio(book),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: AppColors.brandDark,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          minimumSize: const Size(0, 26),
+                          visualDensity: VisualDensity.compact,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusPill,
+                            ),
+                          ),
+                        ),
+                        icon: const Icon(Icons.play_arrow_rounded, size: 14),
+                        label: const Text(
+                          'Listen',
+                          style: TextStyle(
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 12. Reader Stories & Testimonials Carousel
+// ──────────────────────────────────────────────
+class _ReaderReviewsCarousel extends StatelessWidget {
+  const _ReaderReviewsCarousel();
+
+  @override
+  Widget build(BuildContext context) {
+    final reviews = [
+      {
+        'quote':
+            'Book Store has completely transformed how I discover new authors. The packaging and delivery was impeccable!',
+        'reader': 'Sarah M.',
+        'city': 'Karachi',
+        'book': 'The Great Gatsby',
+      },
+      {
+        'quote':
+            'The hardcover quality and fast dispatch across Pakistan is unmatched. 100% genuine titles.',
+        'reader': 'Bilal A.',
+        'city': 'Lahore',
+        'book': 'Atomic Habits',
+      },
+      {
+        'quote':
+            'Found computer science and fiction titles that were completely sold out in local stores. Highly recommended!',
+        'reader': 'Dr. Tariq Z.',
+        'city': 'Islamabad',
+        'book': 'Clean Code',
+      },
+    ];
+
+    return SizedBox(
+      height: 145,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
+        scrollDirection: Axis.horizontal,
+        itemCount: reviews.length,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, i) {
+          final r = reviews[i];
+          return Container(
+            width: 270,
+            padding: const EdgeInsets.all(AppSizes.md),
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardTheme.color,
+              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.15),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    ...List.generate(
+                      5,
+                      (_) => const Icon(
+                        Icons.star_rounded,
+                        size: 14,
+                        color: AppColors.accent,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 5,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: const Row(
+                        children: [
+                          Icon(
+                            Icons.check_circle_rounded,
+                            size: 10,
+                            color: Colors.green,
+                          ),
+                          SizedBox(width: 2),
+                          Text(
+                            'VERIFIED',
+                            style: TextStyle(
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Text(
+                    '"${r['quote']}"',
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                      height: 1.25,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '— ${r['reader']}, ${r['city']} · on ${r['book']}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+// ──────────────────────────────────────────────
+// 13. VIP Readers Club & Membership Banner
+// ──────────────────────────────────────────────
+class _BookClubBanner extends StatelessWidget {
+  const _BookClubBanner({required this.onJoin});
+
+  final VoidCallback onJoin;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(AppSizes.radiusXl),
+        border: Border.all(
+          color: AppColors.accent.withValues(alpha: 0.4),
+          width: 1.2,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black26,
+            blurRadius: 10,
+            offset: Offset(0, 4),
+          ),
+        ],
+      ),
+      padding: const EdgeInsets.all(AppSizes.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.accent.withValues(alpha: 0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.card_membership_rounded,
+                  color: AppColors.accent,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 10),
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'BOOK STORE READERS CLUB',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.accent,
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  Text(
+                    'Join 50,000+ Literary Explorers',
+                    style: TextStyle(
+                      fontFamily: 'Georgia',
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            'Get 15% off your next order, invitations to live author AMAs, monthly reading challenges, and free collector bookmarks.',
+            style: TextStyle(fontSize: 11, color: Colors.white70, height: 1.3),
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: onJoin,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accent,
+              foregroundColor: AppColors.brandDark,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              minimumSize: const Size(0, 34),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSizes.radiusPill),
+              ),
+            ),
+            child: const Text(
+              'Join VIP Club Free',
+              style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

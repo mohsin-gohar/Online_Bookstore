@@ -4044,7 +4044,7 @@ const List<Map<String, dynamic>> demoFaqs = <Map<String, dynamic>>[
     'question': 'How do promo codes work?',
     'answer':
         'During checkout, enter an active promo code such as APTECH20 (20% off), '
-        'FOLIO10 (\$10 off), or FREESHIP in the promo code field and tap Apply.',
+        'BOOKSTORE10 (10% off), or FREESHIP in the promo code field and tap Apply.',
     'category': 'Discounts',
   },
   <String, dynamic>{

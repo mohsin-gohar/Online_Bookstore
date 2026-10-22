@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:go_router/go_router.dart';
@@ -7,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_navigation.dart';
 import '../../core/routes/app_routes.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/snackbar_helper.dart';
@@ -18,6 +18,9 @@ import '../../logic/cart_provider.dart';
 import '../../logic/review_provider.dart';
 import '../../logic/wishlist_provider.dart';
 import '../common_widgets/book_card.dart';
+import '../common_widgets/book_cover_image.dart';
+import '../common_widgets/cart_badge_button.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/error_state.dart';
 import '../common_widgets/loading_indicator.dart';
 import '../common_widgets/quantity_selector.dart';
@@ -195,11 +198,14 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     if (_loading) {
-      return Scaffold(appBar: AppBar(), body: const FullScreenLoader());
+      return const Scaffold(
+        appBar: CustomAppBar(title: ''),
+        body: FullScreenLoader(),
+      );
     }
     if (_error != null || _book == null) {
       return Scaffold(
-        appBar: AppBar(),
+        appBar: const CustomAppBar(title: ''),
         body: ErrorState(
           message: _error ?? 'This book could not be found.',
           onRetry: _load,
@@ -214,8 +220,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
+          tooltip: 'Back',
           icon: const Icon(Icons.arrow_back_rounded),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => AppNavigator.popOrGo(context, AppRoutes.homePath),
         ),
         title: Text(
           book.title,
@@ -239,6 +246,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               color: isWishlisted ? AppColors.danger : null,
             ),
           ),
+          const CartBadgeButton(),
           Gaps.hXs,
         ],
       ),
@@ -260,33 +268,15 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                     ),
                   ],
                 ),
-                child: Hero(
-                  tag: BookCard.heroTag(book.id),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-                    child: book.coverImage.isNotEmpty
-                        ? CachedNetworkImage(
-                            imageUrl: book.coverImage,
-                            width: 170,
-                            height: 250,
-                            fit: BoxFit.cover,
-                            placeholder: (_, _) => Container(
-                              width: 170,
-                              height: 250,
-                              color: AppColors.darkSurfaceVariant,
-                            ),
-                          )
-                        : Container(
-                            width: 170,
-                            height: 250,
-                            color: AppColors.darkSurfaceVariant,
-                            child: const Icon(
-                              Icons.menu_book_rounded,
-                              size: 64,
-                              color: AppColors.accent,
-                            ),
-                          ),
-                  ),
+                child: BookCoverImage(
+                  heroTag: BookCard.heroTag(book.id),
+                  imageUrl: book.coverImage,
+                  title: book.title,
+                  author: book.author,
+                  width: 170,
+                  height: 250,
+                  fit: BoxFit.cover,
+                  borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                 ),
               ),
             ),
@@ -473,7 +463,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           Gaps.xxs,
                           Text(
                             book.publisher.isEmpty
-                                ? 'Folio Press'
+                                ? 'Book Store Press'
                                 : book.publisher,
                             style: const TextStyle(fontWeight: FontWeight.w700),
                           ),

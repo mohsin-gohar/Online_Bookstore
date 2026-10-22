@@ -102,47 +102,50 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ),
             Center(
-              child: FadeTransition(
-                opacity: _fade,
-                child: ScaleTransition(
-                  scale: _scale,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Brand mark.
-                      BrandMark(size: 112, onDark: true),
-                      const SizedBox(height: 24),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 24),
+                child: FadeTransition(
+                  opacity: _fade,
+                  child: ScaleTransition(
+                    scale: _scale,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Brand mark.
+                        BrandMark(size: 112, onDark: true),
+                        const SizedBox(height: 24),
 
-                      Text(
-                        AppStrings.appName,
-                        style: theme.textTheme.displaySmall?.copyWith(
-                          color: AppColors.white,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 3,
-                        ),
-                      ),
-                      const SizedBox(height: 14),
-                      const BrassRule(width: 54),
-                      const SizedBox(height: 14),
-                      Text(
-                        AppStrings.appTagline,
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.white.withValues(alpha: 0.85),
-                        ),
-                      ),
-                      const SizedBox(height: 36),
-                      const SizedBox(
-                        height: 26,
-                        width: 26,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.4,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            AppColors.accentLight,
+                        Text(
+                          AppStrings.appName,
+                          style: theme.textTheme.displaySmall?.copyWith(
+                            color: AppColors.white,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 3,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 14),
+                        const BrassRule(width: 54),
+                        const SizedBox(height: 14),
+                        Text(
+                          AppStrings.appTagline,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: AppColors.white.withValues(alpha: 0.85),
+                          ),
+                        ),
+                        const SizedBox(height: 36),
+                        const SizedBox(
+                          height: 26,
+                          width: 26,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.4,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              AppColors.accentLight,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

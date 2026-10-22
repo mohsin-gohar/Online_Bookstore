@@ -16,6 +16,7 @@ import '../../logic/auth_provider.dart';
 import '../../logic/cart_provider.dart';
 import '../../logic/order_provider.dart';
 import '../../logic/profile_provider.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import 'widgets/address_form_sheet.dart';
 import 'widgets/payment_form_sheet.dart';
@@ -79,7 +80,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         context,
         'Promo APTECH20 applied! 20% discount',
       );
-    } else if (code == 'FOLIO10') {
+    } else if (code == 'BOOKSTORE10') {
       final discount = _subtotal * 0.10;
       setState(() {
         _appliedPromo = code;
@@ -88,7 +89,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       });
       SnackbarHelper.showSuccess(
         context,
-        'Promo FOLIO10 applied! 10% discount',
+        'Promo BOOKSTORE10 applied! 10% discount',
       );
     } else if (code == 'WELCOME15') {
       final discount = _subtotal > 15 ? 15.0 : _subtotal * 0.5;
@@ -110,11 +111,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       );
     } else {
       setState(() {
-        _promoError = 'Invalid code. Try APTECH20 or FOLIO10';
+        _promoError = 'Invalid code. Try APTECH20 or BOOKSTORE10';
       });
       SnackbarHelper.showError(
         context,
-        'Invalid promo code. Try APTECH20 or FOLIO10',
+        'Invalid promo code. Try APTECH20 or BOOKSTORE10',
       );
     }
   }
@@ -249,7 +250,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     if (cart.items.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: const Text(AppStrings.checkout)),
+        appBar: const CustomAppBar(
+          title: AppStrings.checkout,
+          showCart: false,
+          fallbackRoute: AppRoutes.cartPath,
+        ),
         body: EmptyState(
           icon: Icons.shopping_cart_outlined,
           title: AppStrings.emptyCart,
@@ -261,7 +266,11 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.checkout)),
+      appBar: const CustomAppBar(
+        title: AppStrings.checkout,
+        showCart: false,
+        fallbackRoute: AppRoutes.cartPath,
+      ),
       body: ListView(
         padding: const EdgeInsets.all(AppSizes.md),
         children: [
@@ -334,7 +343,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                             controller: _promoCtrl,
                             textCapitalization: TextCapitalization.characters,
                             decoration: InputDecoration(
-                              hintText: 'e.g. APTECH20 or FOLIO10',
+                              hintText: 'e.g. APTECH20 or BOOKSTORE10',
                               prefixIcon: const Icon(
                                 Icons.local_offer_outlined,
                                 color: AppColors.accent,
@@ -364,7 +373,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     ),
                     Gaps.xs,
                     const Text(
-                      'Try "APTECH20" (20% off), "FOLIO10" (10% off), or "FREESHIP"',
+                      'Try "APTECH20" (20% off), "BOOKSTORE10" (10% off), or "FREESHIP"',
                       style: TextStyle(fontSize: 11, color: AppColors.grey400),
                     ),
                   ] else ...[

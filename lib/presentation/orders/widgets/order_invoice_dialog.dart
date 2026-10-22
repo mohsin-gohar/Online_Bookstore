@@ -57,7 +57,7 @@ class OrderInvoiceDialog extends StatelessWidget {
                           ),
                           Gaps.xs,
                           Text(
-                            'FOLIO BOOKSTORE',
+                            'BOOK STORE',
                             style: TextStyle(
                               fontFamily: 'Georgia',
                               fontSize: 16,

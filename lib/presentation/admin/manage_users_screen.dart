@@ -5,11 +5,13 @@ import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
+import '../../core/routes/app_routes.dart';
 import '../../core/utils/formatters.dart';
 import '../../core/utils/snackbar_helper.dart';
 import '../../data/models/user_model.dart';
 import '../../data/repositories/user_repository.dart';
 import '../../data/services/app_exceptions.dart';
+import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/empty_state.dart';
 import '../common_widgets/error_state.dart';
 
@@ -99,7 +101,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(AppStrings.manageUsers)),
+      appBar: const CustomAppBar(
+        title: AppStrings.manageUsers,
+        showCart: false,
+        showHome: false,
+        fallbackRoute: AppRoutes.adminDashboardPath,
+      ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
@@ -145,6 +152,7 @@ class _UserRow extends StatelessWidget {
             backgroundImage: user.photoUrl.isNotEmpty
                 ? CachedNetworkImageProvider(user.photoUrl)
                 : null,
+            onBackgroundImageError: user.photoUrl.isNotEmpty ? (_, _) {} : null,
             child: user.photoUrl.isEmpty
                 ? Text(
                     user.initial,
