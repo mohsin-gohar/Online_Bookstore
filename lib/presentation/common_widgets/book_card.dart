@@ -274,6 +274,8 @@ class _Cover extends StatelessWidget {
   Widget build(BuildContext context) {
     final cover = BookCoverImage(
       imageUrl: book.coverImage,
+      title: book.title,
+      author: book.author,
       width: width,
       height: height,
       fit: BoxFit.cover,

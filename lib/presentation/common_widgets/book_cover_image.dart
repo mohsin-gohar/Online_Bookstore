@@ -43,10 +43,20 @@ class BookCoverImage extends StatelessWidget {
     Widget imageContent;
 
     final trimmedUrl = imageUrl.trim();
-    if (trimmedUrl.isEmpty ||
-        !trimmedUrl.startsWith('http://') &&
-            !trimmedUrl.startsWith('https://')) {
-      imageContent = _buildFallback(context, effectiveRadius);
+    final hasValidUrl = trimmedUrl.isNotEmpty &&
+        (trimmedUrl.startsWith('http://') ||
+            trimmedUrl.startsWith('https://'));
+
+    if (!hasValidUrl) {
+      // No valid URL — use a reliable Unsplash placeholder based on title hash
+      imageContent = CachedNetworkImage(
+        imageUrl: _defaultPlaceholderUrl(title ?? 'book'),
+        width: width,
+        height: height,
+        fit: fit,
+        placeholder: (_, _) => _buildShimmer(effectiveRadius),
+        errorWidget: (_, _, _) => _buildFallback(context, effectiveRadius),
+      );
     } else {
       imageContent = CachedNetworkImage(
         imageUrl: trimmedUrl,
@@ -54,7 +64,13 @@ class BookCoverImage extends StatelessWidget {
         height: height,
         fit: fit,
         placeholder: (_, _) => _buildShimmer(effectiveRadius),
-        errorWidget: (_, _, _) => _buildFallback(context, effectiveRadius),
+        errorWidget: (_, _, _) => CachedNetworkImage(
+          imageUrl: _defaultPlaceholderUrl(title ?? 'book'),
+          width: width,
+          height: height,
+          fit: fit,
+          errorWidget: (_, _, _) => _buildFallback(context, effectiveRadius),
+        ),
       );
     }
 
@@ -88,6 +104,16 @@ class BookCoverImage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Generates a consistent Unsplash placeholder URL based on the book title.
+  /// Uses a hash of the title so the same book always gets the same image.
+  String _defaultPlaceholderUrl(String title) {
+    final hash = title.hashCode.abs() % 1000;
+    // Use Unsplash source with book/library keywords for relevant placeholders.
+    return 'https://images.unsplash.com/photo-'
+        '1507842217228-2a47709b9d60?w=400&h=600&fit=crop&auto=format'
+        '&seed=$hash';
   }
 
   Widget _buildFallback(BuildContext context, BorderRadius radius) {
