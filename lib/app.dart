@@ -97,6 +97,13 @@ class BookStoreApp extends StatelessWidget {
           create: (ctx) =>
               ReviewProvider(repository: ctx.read<ReviewRepository>()),
         ),
+        // NotificationProvider must sit above OrderProvider: the proxy below
+        // resolves it from the enclosing scope at create/update time.
+        ChangeNotifierProvider<NotificationProvider>(
+          create: (ctx) => NotificationProvider(
+            repository: ctx.read<NotificationRepository>(),
+          ),
+        ),
         // OrderProvider depends on NotificationProvider so an admin status
         // change can raise a customer notification.
         ChangeNotifierProxyProvider<NotificationProvider, OrderProvider>(
@@ -124,11 +131,6 @@ class BookStoreApp extends StatelessWidget {
           create: (ctx) =>
               ProfileProvider(repository: ctx.read<UserRepository>()),
         ),
-        ChangeNotifierProvider<NotificationProvider>(
-          create: (ctx) => NotificationProvider(
-            repository: ctx.read<NotificationRepository>(),
-          ),
-        ),
 
         // Theme mode (light/dark/system) with persistence.
         ChangeNotifierProvider<ThemeProvider>(
@@ -148,23 +150,52 @@ class BookStoreApp extends StatelessWidget {
           final themeMode = context.watch<ThemeProvider>().themeMode;
           final router = context.read<GoRouter>();
 
-          return UserSessionSync(
-            child: MaterialApp.router(
-              title: AppStrings.appName,
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.light,
-              darkTheme: AppTheme.dark,
-              themeMode: themeMode,
-              routerConfig: router,
-              // Expose the active backend so the profile screen can say
-              // whether the app is talking to a live server.
-              builder: (context, child) => child ?? const SizedBox.shrink(),
+          return _SessionBootstrap(
+            child: UserSessionSync(
+              child: MaterialApp.router(
+                title: AppStrings.appName,
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.light,
+                darkTheme: AppTheme.dark,
+                themeMode: themeMode,
+                routerConfig: router,
+                // Expose the active backend so the profile screen can say
+                // whether the app is talking to a live server.
+                builder: (context, child) => child ?? const SizedBox.shrink(),
+              ),
             ),
           );
         },
       ),
     );
   }
+}
+
+/// Restores the stored session on every launch.
+///
+/// The splash screen does this too, but a deep-link reload starts directly on
+/// the target route, so the root must guarantee it happens.
+class _SessionBootstrap extends StatefulWidget {
+  const _SessionBootstrap({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_SessionBootstrap> createState() => _SessionBootstrapState();
+}
+
+class _SessionBootstrapState extends State<_SessionBootstrap> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<AuthProvider>().bootstrap();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Shows the active backend mode in the profile screen.

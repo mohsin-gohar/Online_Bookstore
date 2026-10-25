@@ -129,6 +129,7 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
   @override
   Widget build(BuildContext context) {
     final wishlist = context.watch<WishlistProvider>();
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: CustomAppBar(title: widget.authorName),
@@ -193,10 +194,10 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                             child: _author?.photoUrl.isEmpty != false
                                 ? Text(
                                     _author?.initials ?? 'A',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       fontSize: 28,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.accent,
+                                      color: scheme.primary,
                                     ),
                                   )
                                 : null,
@@ -221,8 +222,8 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                           Gaps.xs,
                           Text(
                             '${_books.length} ${_books.length == 1 ? "Book" : "Books"} Available',
-                            style: const TextStyle(
-                              color: AppColors.accent,
+                            style: TextStyle(
+                              color: scheme.primary,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -249,9 +250,9 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                   // ── Section Title ──
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.menu_book_rounded,
-                        color: AppColors.accent,
+                        color: scheme.primary,
                         size: 20,
                       ),
                       Gaps.xs,
@@ -276,11 +277,11 @@ class _AuthorBooksScreenState extends State<AuthorBooksScreen> {
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.62,
+                          const SliverGridDelegateWithMaxCrossAxisExtent(
+                            maxCrossAxisExtent: 190,
+                            childAspectRatio: 0.52,
                             crossAxisSpacing: AppSizes.sm,
-                            mainAxisSpacing: AppSizes.sm,
+                            mainAxisSpacing: AppSizes.md,
                           ),
                       itemCount: _books.length,
                       itemBuilder: (context, index) {

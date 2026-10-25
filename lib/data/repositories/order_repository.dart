@@ -113,48 +113,30 @@ class OrderRepository {
 
   /// Total number of orders (admin dashboard).
   Future<int> countOrders() async {
-    try {
-      final ApiResponse response = await _api.get(
-        ApiConstants.adminOrders,
-        query: <String, dynamic>{'per_page': 1},
-      );
-      return response.pagination.total;
-    } catch (_) {
-      return 0;
-    }
+    final ApiResponse response = await _api.get(
+      ApiConstants.adminOrders,
+      query: <String, dynamic>{'per_page': 1},
+    );
+    return response.pagination.total;
   }
 
   /// Count of orders at a given [status] (admin dashboard).
   Future<int> countByStatus(OrderStatus status) async {
-    try {
-      final ApiResponse response = await _api.get(
-        ApiConstants.adminOrders,
-        query: <String, dynamic>{'per_page': 1, 'status': status.value},
-      );
-      return response.pagination.total;
-    } catch (_) {
-      return 0;
-    }
+    final ApiResponse response = await _api.get(
+      ApiConstants.adminOrders,
+      query: <String, dynamic>{'per_page': 1, 'status': status.value},
+    );
+    return response.pagination.total;
   }
 
   /// Total revenue across the non-cancelled orders (admin dashboard).
   ///
   /// The server is the source of truth; the figure comes from
   /// `GET /admin/stats`.
-  Future<double> getTotalRevenue({int maxDocs = 1000}) async {
-    try {
-      final ApiResponse response = await _api.get(ApiConstants.adminStats);
-      final Object? revenue = response.map['revenue'];
-      if (revenue is num) return revenue.toDouble();
-      return 0;
-    } catch (e, s) {
-      developer.log(
-        'OrderRepository.getTotalRevenue failed',
-        error: e,
-        stackTrace: s,
-      );
-      return 0;
-    }
+  Future<double> getTotalRevenue() async {
+    final ApiResponse response = await _api.get(ApiConstants.adminStats);
+    final Object? revenue = response.map['revenue'];
+    return revenue is num ? revenue.toDouble() : 0;
   }
 
   // ── Writes ────────────────────────────────
@@ -172,6 +154,7 @@ class OrderRepository {
           'items': order.items
               .map((OrderItemModel e) => e.toMap())
               .toList(growable: false),
+          if (order.promoCode.isNotEmpty) 'promo_code': order.promoCode,
         },
       );
 

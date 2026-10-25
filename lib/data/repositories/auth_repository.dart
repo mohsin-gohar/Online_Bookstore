@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import '../../core/constants/api_constants.dart';
 import '../models/api_response.dart';
 import '../models/user_model.dart';
@@ -15,7 +13,7 @@ import '../services/token_storage_service.dart';
 /// Responsibilities:
 ///  • register / sign in (email + Google) and return a domain [UserModel],
 ///  • store the bearer token in the platform keystore,
-///  • expose auth-state changes as a stream of [UserModel],
+///  • restore the stored session on launch,
 ///  • map every failure into an [AppException] so the provider stays thin.
 ///
 /// The Google flow sends the **ID token** to the server, which verifies it
@@ -164,12 +162,6 @@ class AuthRepository {
       _currentUid = null;
       return null;
     }
-  }
-
-  /// Emits [UserModel]s as the session changes (null when signed out).
-  Stream<UserModel?> authStateChanges() async* {
-    final UserModel? user = await getCurrentUser();
-    yield user;
   }
 
   // ── Internals ─────────────────────────────

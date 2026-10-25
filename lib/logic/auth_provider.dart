@@ -32,8 +32,6 @@ class AuthProvider extends ChangeNotifier {
   final AuthRepository repository;
   final LocalStorageService storage;
 
-  StreamSubscription<UserModel?>? _authSub;
-
   // ── State ─────────────────
 
   AuthStatus _status = AuthStatus.unknown;
@@ -54,18 +52,16 @@ class AuthProvider extends ChangeNotifier {
 
   // ── Lifecycle ─────────────────────────────
 
-  /// Called once at startup (from the splash screen). Attaches the auth-state
-  /// listener and resolves the initial session.
-  Future<void> bootstrap() async {
-    // Listen to live auth changes for the whole app lifetime.
-    _authSub ??= repository.authStateChanges().listen(
-      (user) => _applyAuthState(user),
-      onError: (Object e, StackTrace s) {
-        developer.log('authStateChanges error', error: e, stackTrace: s);
-        _setError(const ServerException());
-      },
-    );
+  Future<void>? _bootstrapFuture;
 
+  /// Called at startup (from the app root and the splash screen). Resolves the
+  /// stored session exactly once.
+  ///
+  /// Idempotent: deep links skip the splash screen, so the root also calls
+  /// this; both callers share the same future instead of hitting `/me` twice.
+  Future<void> bootstrap() => _bootstrapFuture ??= _bootstrap();
+
+  Future<void> _bootstrap() async {
     try {
       final current = await repository.getCurrentUser();
       _applyAuthState(current);
@@ -216,11 +212,4 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void _clearError() => _errorMessage = null;
-
-  @override
-  void dispose() {
-    _authSub?.cancel();
-    _authSub = null;
-    super.dispose();
-  }
 }

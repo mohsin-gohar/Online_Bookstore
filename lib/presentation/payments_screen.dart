@@ -181,12 +181,12 @@ class _PaymentCard extends StatelessWidget {
                               AppSizes.radiusPill,
                             ),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Default',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
-                              color: AppColors.accent,
+                              color: scheme.primary,
                             ),
                           ),
                         ),

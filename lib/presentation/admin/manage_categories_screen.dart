@@ -23,6 +23,15 @@ class ManageCategoriesScreen extends StatefulWidget {
 }
 
 class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    final books = context.read<BookProvider>();
+    if (!books.categories.hasLoadedOnce && !books.categories.isLoading) {
+      books.loadHome();
+    }
+  }
+
   Future<void> _add() async {
     final category = await CategoryFormSheet.show(context);
     if (category == null || !mounted) return;

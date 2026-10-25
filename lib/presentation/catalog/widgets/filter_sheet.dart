@@ -60,7 +60,7 @@ class FilterSheet extends StatefulWidget {
     return showModalBottomSheet<FilterResult>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppColors.darkSurface,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       builder: (_) => FilterSheet(
         categories: categories,
         initialSort: initialSort,
@@ -156,9 +156,9 @@ class _FilterSheetState extends State<FilterSheet> {
                 const Spacer(),
                 TextButton(
                   onPressed: _reset,
-                  child: const Text(
+                  child: Text(
                     AppStrings.reset,
-                    style: TextStyle(color: AppColors.accent),
+                    style: TextStyle(color: theme.colorScheme.primary),
                   ),
                 ),
               ],
@@ -188,7 +188,7 @@ class _FilterSheetState extends State<FilterSheet> {
                             labelStyle: TextStyle(
                               color: _sort == s
                                   ? AppColors.brandDark
-                                  : AppColors.grey300,
+                                  : theme.colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w700,
                             ),
                             onSelected: (_) => setState(() => _sort = s),
@@ -212,7 +212,7 @@ class _FilterSheetState extends State<FilterSheet> {
                         labelStyle: TextStyle(
                           color: _categoryId == null
                               ? AppColors.brandDark
-                              : AppColors.grey300,
+                              : theme.colorScheme.onSurfaceVariant,
                           fontWeight: FontWeight.w700,
                         ),
                         onSelected: (_) => setState(() => _categoryId = null),
@@ -225,7 +225,7 @@ class _FilterSheetState extends State<FilterSheet> {
                           labelStyle: TextStyle(
                             color: _categoryId == c.id
                                 ? AppColors.brandDark
-                                : AppColors.grey300,
+                                : theme.colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w700,
                           ),
                           onSelected: (_) => setState(() => _categoryId = c.id),
@@ -245,7 +245,7 @@ class _FilterSheetState extends State<FilterSheet> {
                         '${Formatters.price(_priceRange.end)}',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: AppColors.accent,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ],
@@ -253,7 +253,7 @@ class _FilterSheetState extends State<FilterSheet> {
                   SliderTheme(
                     data: SliderTheme.of(context).copyWith(
                       activeTrackColor: AppColors.accent,
-                      inactiveTrackColor: AppColors.darkSurfaceVariant,
+                      inactiveTrackColor: theme.colorScheme.surfaceContainerHighest,
                       thumbColor: AppColors.accent,
                     ),
                     child: RangeSlider(
@@ -334,7 +334,9 @@ class _FilterSheetState extends State<FilterSheet> {
       selected: selected,
       selectedColor: AppColors.accent,
       labelStyle: TextStyle(
-        color: selected ? AppColors.brandDark : AppColors.grey300,
+        color: selected
+            ? AppColors.brandDark
+            : Theme.of(context).colorScheme.onSurfaceVariant,
         fontWeight: FontWeight.w700,
       ),
       onSelected: (_) => setState(() => _minRating = value),
@@ -353,7 +355,7 @@ class _Label extends StatelessWidget {
       text,
       style: Theme.of(context).textTheme.titleSmall?.copyWith(
         fontWeight: FontWeight.w700,
-        color: AppColors.accent,
+        color: Theme.of(context).colorScheme.primary,
       ),
     );
   }

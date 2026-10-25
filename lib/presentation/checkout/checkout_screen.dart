@@ -221,6 +221,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           .toList(),
       subtotal: _subtotal,
       shipping: _shipping,
+      discount: _discountAmount,
+      promoCode: _appliedPromo ?? '',
       total: _total,
       address: address.summary,
       paymentMethod: paymentLabel,
@@ -372,9 +374,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ],
                     ),
                     Gaps.xs,
-                    const Text(
+                    Text(
                       'Try "APTECH20" (20% off), "BOOKSTORE10" (10% off), or "FREESHIP"',
-                      style: TextStyle(fontSize: 11, color: AppColors.grey400),
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ] else ...[
                     Container(
@@ -500,7 +505,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   Text(
                     Formatters.price(_total),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.brand,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -637,19 +642,19 @@ class _SelectableTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(AppSizes.radiusMd),
             border: Border.all(
               color: selected
-                  ? AppColors.brand
+                  ? scheme.primary
                   : scheme.onSurface.withValues(alpha: 0.12),
               width: selected ? 1.6 : 1,
             ),
             color: selected
-                ? AppColors.brand.withValues(alpha: 0.05)
+                ? scheme.primary.withValues(alpha: 0.05)
                 : Colors.transparent,
           ),
           child: Row(
             children: [
               Icon(
                 leading,
-                color: selected ? AppColors.brand : scheme.onSurface,
+                color: selected ? scheme.primary : scheme.onSurface,
               ),
               Gaps.hSm,
               Expanded(
@@ -706,7 +711,7 @@ class _SelectableTile extends StatelessWidget {
                     ? Icons.radio_button_checked_rounded
                     : Icons.radio_button_unchecked_rounded,
                 color: selected
-                    ? AppColors.brand
+                    ? scheme.primary
                     : scheme.onSurface.withValues(alpha: 0.4),
               ),
             ],
@@ -744,7 +749,8 @@ class _SummaryRow extends StatelessWidget {
           value,
           style: style?.copyWith(
             fontWeight: FontWeight.w700,
-            color: valueColor ?? (bold ? AppColors.brand : null),
+            color: valueColor ??
+                (bold ? Theme.of(context).colorScheme.primary : null),
           ),
         ),
       ],

@@ -4,6 +4,7 @@ import 'dart:developer' as developer;
 import '../../core/constants/api_constants.dart';
 import '../models/api_response.dart';
 import '../models/book_model.dart';
+import '../models/wishlist_item_model.dart';
 import '../models/wishlist_model.dart';
 import '../services/api_factory.dart';
 import '../services/api_transport.dart';
@@ -25,8 +26,7 @@ class WishlistRepository {
     if (userId.isEmpty) throw const UnauthenticatedException();
     try {
       final ApiResponse response = await _api.get(ApiConstants.wishlist);
-      if (response.data == null) return WishlistModel.empty(userId);
-      return WishlistModel.fromMap(response.map, userId: userId);
+      return _fromResponse(response, userId);
     } on AppException {
       rethrow;
     } catch (e, s) {
@@ -53,8 +53,7 @@ class WishlistRepository {
       ApiConstants.wishlistItem(book.id),
       body: <String, dynamic>{'book_id': book.id},
     );
-    if (response.data == null) return WishlistModel.empty(userId);
-    return WishlistModel.fromMap(response.map, userId: userId);
+    return _fromResponse(response, userId);
   }
 
   /// Removes [bookId] from the wishlist.
@@ -62,8 +61,7 @@ class WishlistRepository {
     final ApiResponse response = await _api.delete(
       ApiConstants.wishlistItem(bookId),
     );
-    if (response.data == null) return WishlistModel.empty(userId);
-    return WishlistModel.fromMap(response.map, userId: userId);
+    return _fromResponse(response, userId);
   }
 
   /// Toggles [book] in the wishlist; returns the resulting wishlist.
@@ -80,13 +78,27 @@ class WishlistRepository {
     if (userId.isEmpty) throw const UnauthenticatedException();
     try {
       final ApiResponse response = await _api.delete(ApiConstants.wishlist);
-      if (response.data == null) return WishlistModel.empty(userId);
-      return WishlistModel.fromMap(response.map, userId: userId);
+      return _fromResponse(response, userId);
     } on AppException {
       rethrow;
     } catch (e, s) {
       developer.log('WishlistRepository.clear failed', error: e, stackTrace: s);
       throw const ServerException('Could not clear your wishlist.');
     }
+  }
+
+  /// The live API returns the wishlist as a bare `data[]` list, while the
+  /// mock transport wraps it in `{userId, items}`; accept both.
+  WishlistModel _fromResponse(ApiResponse response, String userId) {
+    if (response.data == null) return WishlistModel.empty(userId);
+    if (response.isList) {
+      return WishlistModel(
+        userId: userId,
+        items: response.list
+            .map(WishlistItemModel.fromMap)
+            .toList(growable: false),
+      );
+    }
+    return WishlistModel.fromMap(response.map, userId: userId);
   }
 }

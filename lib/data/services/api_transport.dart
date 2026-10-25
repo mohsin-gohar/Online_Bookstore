@@ -1,9 +1,7 @@
 import 'package:dio/dio.dart';
 
-import '../mock/mock_transport.dart';
 import '../models/api_response.dart';
 import 'api_client.dart';
-import 'app_exceptions.dart';
 
 /// The transport the repositories talk to.
 ///
@@ -37,66 +35,37 @@ abstract class ApiTransport {
   Future<ApiResponse> upload(String path, FormData formData);
 }
 
-/// The live transport: a thin adapter over [ApiClient] with automatic
-/// fallback to [MockApiTransport] when the local Laravel server is offline.
+/// The live transport: a thin adapter over [ApiClient].
+///
+/// Failures are reported to the caller — live mode never substitutes demo
+/// data for a real session. Offline demo use is served by mock mode
+/// (`API_MODE=mock`), not by a hidden fallback.
 class HttpApiTransport implements ApiTransport {
-  HttpApiTransport(this._client)
-    : _fallback = MockApiTransport(tokenStorage: _client.tokenStorage);
+  HttpApiTransport(this._client);
 
   final ApiClient _client;
-  final MockApiTransport _fallback;
 
   @override
-  Future<ApiResponse> get(String path, {Map<String, dynamic>? query}) async {
-    try {
-      return await _client.get(path, query: query);
-    } on NetworkException {
-      return _fallback.get(path, query: query);
-    }
-  }
+  Future<ApiResponse> get(String path, {Map<String, dynamic>? query}) =>
+      _client.get(path, query: query);
 
   @override
-  Future<ApiResponse> post(String path, {Object? body}) async {
-    try {
-      return await _client.post(path, body: body);
-    } on NetworkException {
-      return _fallback.post(path, body: body);
-    }
-  }
+  Future<ApiResponse> post(String path, {Object? body}) =>
+      _client.post(path, body: body);
 
   @override
-  Future<ApiResponse> put(String path, {Object? body}) async {
-    try {
-      return await _client.put(path, body: body);
-    } on NetworkException {
-      return _fallback.put(path, body: body);
-    }
-  }
+  Future<ApiResponse> put(String path, {Object? body}) =>
+      _client.put(path, body: body);
 
   @override
-  Future<ApiResponse> patch(String path, {Object? body}) async {
-    try {
-      return await _client.patch(path, body: body);
-    } on NetworkException {
-      return _fallback.patch(path, body: body);
-    }
-  }
+  Future<ApiResponse> patch(String path, {Object? body}) =>
+      _client.patch(path, body: body);
 
   @override
-  Future<ApiResponse> delete(String path, {Object? body}) async {
-    try {
-      return await _client.delete(path, body: body);
-    } on NetworkException {
-      return _fallback.delete(path, body: body);
-    }
-  }
+  Future<ApiResponse> delete(String path, {Object? body}) =>
+      _client.delete(path, body: body);
 
   @override
-  Future<ApiResponse> upload(String path, FormData formData) async {
-    try {
-      return await _client.upload(path, formData);
-    } on NetworkException {
-      return _fallback.upload(path, formData);
-    }
-  }
+  Future<ApiResponse> upload(String path, FormData formData) =>
+      _client.upload(path, formData);
 }

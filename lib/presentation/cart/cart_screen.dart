@@ -43,9 +43,9 @@ class CartScreen extends StatelessWidget {
           if (cart.items.isNotEmpty)
             TextButton(
               onPressed: () => _clearCart(context),
-              child: const Text(
+              child: Text(
                 'Clear',
-                style: TextStyle(color: AppColors.accent),
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
               ),
             ),
         ],
@@ -67,16 +67,16 @@ class CartScreen extends StatelessWidget {
   Future<void> _clearCart(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Clear bag?'),
         content: const Text('Remove all items from your bag?'),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text(AppStrings.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Clear'),
           ),
         ],
@@ -155,7 +155,7 @@ class _CartRow extends StatelessWidget {
               Text(
                 Formatters.price(item.price),
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: AppColors.accent,
+                  color: theme.colorScheme.primary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -248,16 +248,17 @@ class _OrderSummaryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return SafeArea(
       child: Container(
         padding: const EdgeInsets.all(AppSizes.md),
-        decoration: const BoxDecoration(
-          color: AppColors.darkSurface,
-          borderRadius: BorderRadius.vertical(
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(AppSizes.radiusXl),
           ),
-          border: Border(top: BorderSide(color: AppColors.darkSurfaceVariant)),
+          border: Border(top: BorderSide(color: scheme.outlineVariant)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -326,7 +327,7 @@ class _OrderSummaryCard extends StatelessWidget {
           style: bold
               ? theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: AppColors.accent,
+                  color: theme.colorScheme.primary,
                 )
               : theme.textTheme.bodyMedium?.copyWith(
                   fontWeight: FontWeight.w600,

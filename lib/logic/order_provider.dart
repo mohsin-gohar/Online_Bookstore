@@ -70,7 +70,9 @@ class OrderProvider extends ChangeNotifier {
     notifyListeners();
     try {
       final page = await _repo.getUserOrders(userId, cursor: _ordersCursor);
-      _orders.addAll(page.items);
+      // A screen refresh or the just-placed order may already be in the list.
+      final seen = _orders.map((o) => o.id).toSet();
+      _orders.addAll(page.items.where((o) => seen.add(o.id)));
       _hasMoreOrders = page.hasMore;
       _ordersCursor = page.cursor;
     } on AppException catch (e) {

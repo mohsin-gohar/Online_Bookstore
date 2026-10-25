@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../../core/constants/api_constants.dart';
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_navigation.dart';
@@ -304,7 +303,7 @@ class _SwitchAuthPrompt extends StatelessWidget {
           child: Text(
             action,
             style: theme.textTheme.bodyMedium?.copyWith(
-              color: AppColors.brand,
+              color: theme.colorScheme.primary,
               fontWeight: FontWeight.w700,
             ),
           ),

@@ -1313,7 +1313,31 @@ class MockApiTransport implements ApiTransport {
     );
     const double freeThreshold = 50;
     const double flatFee = 5.99;
-    final double shipping = subtotal >= freeThreshold ? 0 : flatFee;
+    double shipping = subtotal >= freeThreshold ? 0 : flatFee;
+
+    final String promoCode = _str(payload['promo_code']).trim().toUpperCase();
+    double discount = 0;
+    switch (promoCode) {
+      case '':
+        break;
+      case 'APTECH20':
+        discount = subtotal * 0.20;
+        break;
+      case 'BOOKSTORE10':
+        discount = subtotal * 0.10;
+        break;
+      case 'WELCOME15':
+        discount = subtotal > 15 ? 15.0 : subtotal * 0.5;
+        break;
+      case 'FREESHIP':
+        shipping = 0;
+        break;
+      default:
+        throw const ValidationException('Invalid promo code.');
+    }
+    if (discount > subtotal) discount = subtotal;
+    discount = double.parse(discount.toStringAsFixed(2));
+
     final DateTime now = DateTime.now();
 
     final List<Map<String, dynamic>> orderItems = items.map((
@@ -1335,7 +1359,9 @@ class MockApiTransport implements ApiTransport {
       'items': orderItems,
       'subtotal': subtotal,
       'shipping': shipping,
-      'total': subtotal + shipping,
+      'discount': discount,
+      'promoCode': promoCode,
+      'total': double.parse((subtotal - discount + shipping).toStringAsFixed(2)),
       'status': 'pending',
       'address': _str(payload['address']),
       'paymentMethod': _str(payload['payment_method']),

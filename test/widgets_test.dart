@@ -24,6 +24,9 @@ void main() {
       rating: 4.8,
       reviewCount: 42,
       isBestseller: true,
+      // The cover has its own placeholder artwork; a real URL keeps the test
+      // focused on the card's text content rather than fallback typography.
+      coverImage: 'https://example.com/cover.jpg',
     );
 
     testWidgets('grid layout shows title, author, price and rating', (

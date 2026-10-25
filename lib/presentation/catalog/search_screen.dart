@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_navigation.dart';
@@ -160,6 +159,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final wishlist = context.watch<WishlistProvider>();
+    final scheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(
@@ -180,9 +180,9 @@ class _SearchScreenState extends State<SearchScreen> {
             onSubmitted: _submitTerm,
             decoration: InputDecoration(
               hintText: AppStrings.searchHint,
-              prefixIcon: const Icon(
+              prefixIcon: Icon(
                 Icons.search_rounded,
-                color: AppColors.accent,
+                color: scheme.primary,
               ),
               suffixIcon: _term.isEmpty
                   ? null
@@ -199,7 +199,7 @@ class _SearchScreenState extends State<SearchScreen> {
         actions: [
           IconButton(
             tooltip: 'Filter',
-            icon: const Icon(Icons.tune_rounded, color: AppColors.accent),
+            icon: Icon(Icons.tune_rounded, color: scheme.primary),
             onPressed: _openFilter,
           ),
           Gaps.hXs,
@@ -266,6 +266,7 @@ class _SearchOverview extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return ListView(
       padding: const EdgeInsets.all(AppSizes.md),
@@ -277,7 +278,7 @@ class _SearchOverview extends StatelessWidget {
                 'Recent Searches',
                 style: theme.textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  color: AppColors.accent,
+                  color: scheme.primary,
                 ),
               ),
               const Spacer(),
@@ -294,10 +295,10 @@ class _SearchOverview extends StatelessWidget {
             children: recent
                 .map(
                   (term) => ActionChip(
-                    avatar: const Icon(
+                    avatar: Icon(
                       Icons.history_rounded,
                       size: 16,
-                      color: AppColors.accent,
+                      color: scheme.primary,
                     ),
                     label: Text(term),
                     onPressed: () => onTapTerm(term),
@@ -312,7 +313,7 @@ class _SearchOverview extends StatelessWidget {
           'Popular Genres & Tags',
           style: theme.textTheme.titleSmall?.copyWith(
             fontWeight: FontWeight.w700,
-            color: AppColors.accent,
+            color: scheme.primary,
           ),
         ),
         Gaps.xs,

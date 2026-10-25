@@ -172,12 +172,16 @@ void main() {
         items: const [],
         subtotal: 40,
         shipping: 5,
-        total: 45,
+        discount: 8,
+        promoCode: 'APTECH20',
+        total: 37,
         status: OrderStatus.confirmed,
         orderDate: DateTime(2024, 3, 3),
       );
       final restored = OrderModel.fromMap(order.toMap(), id: 'o1');
-      expect(restored.total, 45);
+      expect(restored.total, 37);
+      expect(restored.discount, 8);
+      expect(restored.promoCode, 'APTECH20');
       expect(restored.status, OrderStatus.confirmed);
       expect(restored.orderDate, DateTime(2024, 3, 3));
     });

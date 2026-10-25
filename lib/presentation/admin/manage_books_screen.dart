@@ -49,13 +49,15 @@ class _ManageBooksScreenState extends State<ManageBooksScreen> {
       _error = null;
     });
     try {
-      final books = await context.read<BookProvider>().searchFor(
-        _searchController.text.trim(),
-        limit: 100,
+      final page = await context.read<BookRepository>().queryBooks(
+        BookQuery(
+          searchTerm: _searchController.text.trim(),
+          pageSize: 100,
+        ),
       );
       if (!mounted) return;
       setState(() {
-        _books = books;
+        _books = page.items;
         _loading = false;
       });
     } catch (e) {
@@ -281,7 +283,7 @@ class _BookRow extends StatelessWidget {
                     Text(
                       Formatters.price(book.price),
                       style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.brand,
+                        color: theme.colorScheme.primary,
                         fontWeight: FontWeight.w700,
                       ),
                     ),

@@ -174,12 +174,12 @@ class _AddressCard extends StatelessWidget {
                       color: AppColors.accent.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(AppSizes.radiusPill),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Default',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.accent,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
                   ),

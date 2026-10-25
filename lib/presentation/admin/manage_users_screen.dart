@@ -188,17 +188,19 @@ class _UserRow extends StatelessWidget {
                           vertical: 1,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.brand.withValues(alpha: 0.14),
+                          color: theme.colorScheme.primary.withValues(
+                            alpha: 0.14,
+                          ),
                           borderRadius: BorderRadius.circular(
                             AppSizes.radiusPill,
                           ),
                         ),
-                        child: const Text(
+                        child: Text(
                           'ADMIN',
                           style: TextStyle(
                             fontSize: 9,
                             fontWeight: FontWeight.w800,
-                            color: AppColors.brand,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                       ),

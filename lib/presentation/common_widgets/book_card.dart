@@ -161,7 +161,7 @@ class BookCard extends StatelessWidget {
                         textAlign: TextAlign.right,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           fontWeight: FontWeight.w700,
-                          color: AppColors.brand,
+                          color: theme.colorScheme.primary,
                         ),
                       ),
                     ),
@@ -230,7 +230,7 @@ class BookCard extends StatelessWidget {
                   Text(
                     book.priceLabel,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      color: AppColors.brand,
+                      color: theme.colorScheme.primary,
                     ),
                   ),
                 ],

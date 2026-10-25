@@ -20,6 +20,8 @@ class OrderModel {
     this.items = const [],
     this.subtotal = 0,
     this.shipping = 0,
+    this.discount = 0,
+    this.promoCode = '',
     this.total = 0,
     this.status = OrderStatus.pending,
     this.address = '',
@@ -37,6 +39,11 @@ class OrderModel {
 
   final double subtotal;
   final double shipping;
+  final double discount;
+
+  /// Code applied at checkout, empty when none was used.
+  final String promoCode;
+
   final double total;
 
   final OrderStatus status;
@@ -101,6 +108,8 @@ class OrderModel {
       items: parseList(m['items'], OrderItemModel.fromMap),
       subtotal: parseDouble(m['subtotal']),
       shipping: parseDouble(m['shipping']),
+      discount: parseDouble(m['discount']),
+      promoCode: parseString(m['promoCode']),
       total: parseDouble(m['total']),
       status: OrderStatus.fromString(parseString(m['status'])),
       address: parseString(m['address']),
@@ -119,6 +128,8 @@ class OrderModel {
     'items': items.map((i) => i.toMap()).toList(),
     'subtotal': subtotal,
     'shipping': shipping,
+    'discount': discount,
+    'promo_code': promoCode,
     'total': total,
     'status': status.value,
     'address': address,
@@ -143,6 +154,8 @@ class OrderModel {
     List<OrderItemModel>? items,
     double? subtotal,
     double? shipping,
+    double? discount,
+    String? promoCode,
     double? total,
     OrderStatus? status,
     String? address,
@@ -159,6 +172,8 @@ class OrderModel {
       items: items ?? this.items,
       subtotal: subtotal ?? this.subtotal,
       shipping: shipping ?? this.shipping,
+      discount: discount ?? this.discount,
+      promoCode: promoCode ?? this.promoCode,
       total: total ?? this.total,
       status: status ?? this.status,
       address: address ?? this.address,

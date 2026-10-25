@@ -240,7 +240,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             child: Text(
                               AppStrings.login,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: AppColors.brand,
+                                color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -293,7 +293,7 @@ class _TermsCheckbox extends StatelessWidget {
                       TextSpan(
                         text: 'Terms of Service',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.brand,
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -301,7 +301,7 @@ class _TermsCheckbox extends StatelessWidget {
                       TextSpan(
                         text: 'Privacy Policy',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: AppColors.brand,
+                          color: theme.colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

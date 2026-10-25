@@ -215,6 +215,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ? 'Free'
                         : Formatters.price(order.shipping),
                   ),
+                  if (order.discount > 0) ...[
+                    Gaps.xs,
+                    _row(
+                      theme,
+                      'Discount (${order.promoCode})',
+                      '-${Formatters.price(order.discount)}',
+                      valueColor: AppColors.success,
+                    ),
+                  ],
                   const Divider(height: AppSizes.lg),
                   _row(
                     theme,
@@ -283,6 +292,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
     String label,
     String value, {
     bool bold = false,
+    Color? valueColor,
   }) {
     final style = bold
         ? theme.textTheme.titleMedium
@@ -295,7 +305,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           value,
           style: style?.copyWith(
             fontWeight: FontWeight.w700,
-            color: bold ? AppColors.brand : null,
+            color: valueColor ?? (bold ? theme.colorScheme.primary : null),
           ),
         ),
       ],

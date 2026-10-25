@@ -358,6 +358,31 @@ class OrderInvoiceDialog extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (order.discount > 0) ...[
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Discount (${order.promoCode}):',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark
+                                    ? AppColors.grey400
+                                    : AppColors.grey600,
+                              ),
+                            ),
+                            Text(
+                              '-${Formatters.price(order.discount)}',
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.success,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 6),
                       Divider(color: AppColors.accent.withValues(alpha: 0.3)),
                       const SizedBox(height: 6),

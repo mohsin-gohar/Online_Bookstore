@@ -105,9 +105,12 @@ class _FaqScreenState extends State<FaqScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       'Have an issue with your order or account? Send us a message and our team will get back to you.',
-                      style: TextStyle(fontSize: 13, color: AppColors.grey400),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     TextFormField(
@@ -277,10 +280,12 @@ class _FaqScreenState extends State<FaqScreen> {
                         padding: const EdgeInsets.all(32),
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.help_outline_rounded,
                               size: 48,
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                             Gaps.sm,
                             const Text(
@@ -291,10 +296,14 @@ class _FaqScreenState extends State<FaqScreen> {
                               ),
                             ),
                             Gaps.xs,
-                            const Text(
+                            Text(
                               'Try different keywords or contact our support team below.',
                               textAlign: TextAlign.center,
-                              style: TextStyle(color: AppColors.grey400),
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ),
                           ],
                         ),
@@ -381,12 +390,14 @@ class _FaqScreenState extends State<FaqScreen> {
                             ),
                           ),
                           Gaps.xs,
-                          const Text(
+                          Text(
                             'Our 24/7 dedicated customer care team is here to assist you.',
                             textAlign: TextAlign.center,
                             style: TextStyle(
                               fontSize: 13,
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           Gaps.md,

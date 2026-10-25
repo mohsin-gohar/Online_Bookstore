@@ -304,19 +304,19 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                       book.author,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: AppColors.accent,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w700,
                         decoration: TextDecoration.underline,
-                        decorationColor: AppColors.accent.withValues(
-                          alpha: 0.5,
-                        ),
+                        decorationColor: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: 0.5),
                       ),
                     ),
                     Gaps.xxs,
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 12,
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ],
                 ),
@@ -330,21 +330,23 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               children: [
                 OutlinedButton.icon(
                   onPressed: () => BookSampleReaderSheet.show(context, book),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.auto_stories_rounded,
-                    color: AppColors.accent,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 18,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Read Sample',
                     style: TextStyle(
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: AppColors.accent.withValues(alpha: 0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.5),
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -358,21 +360,23 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 Gaps.hSm,
                 OutlinedButton.icon(
                   onPressed: () => AudioSampleSheet.show(context, book),
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.headphones_rounded,
-                    color: AppColors.accent,
+                    color: Theme.of(context).colorScheme.primary,
                     size: 18,
                   ),
-                  label: const Text(
+                  label: Text(
                     'Audio Sample',
                     style: TextStyle(
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(
-                      color: AppColors.accent.withValues(alpha: 0.5),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.primary.withValues(alpha: 0.5),
                     ),
                     padding: const EdgeInsets.symmetric(
                       horizontal: 14,
@@ -429,7 +433,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                 'Synopsis',
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   fontWeight: FontWeight.w800,
-                  color: AppColors.accent,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
             ),
@@ -444,7 +448,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
 
             // ── Metadata Cards (Publisher, Pages, ISBN) ──
             Card(
-              color: AppColors.darkSurface,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: Padding(
                 padding: const EdgeInsets.all(AppSizes.md),
                 child: Row(
@@ -456,7 +460,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           Text(
                             'Publisher',
                             style: TextStyle(
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -471,7 +477,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           Text(
                             'ISBN',
                             style: TextStyle(
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -490,7 +498,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           Text(
                             'Pages',
                             style: TextStyle(
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -503,7 +513,9 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                           Text(
                             'Category',
                             style: TextStyle(
-                              color: AppColors.grey400,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                               fontSize: 12,
                             ),
                           ),
@@ -532,20 +544,22 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                     'Reader Reviews',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w800,
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                   const Spacer(),
                   TextButton.icon(
                     onPressed: _writeReview,
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.rate_review_outlined,
                       size: 16,
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
-                    label: const Text(
+                    label: Text(
                       'Review',
-                      style: TextStyle(color: AppColors.accent),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
                   ),
                 ],
@@ -586,10 +600,12 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
             horizontal: AppSizes.md,
             vertical: AppSizes.sm,
           ),
-          decoration: const BoxDecoration(
-            color: AppColors.darkSurface,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             border: Border(
-              top: BorderSide(color: AppColors.darkSurfaceVariant),
+              top: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
           ),
           child: Row(
@@ -603,7 +619,7 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
               Text(
                 Formatters.price(book.price * _qty),
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: AppColors.accent,
+                  color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.w800,
                 ),
               ),

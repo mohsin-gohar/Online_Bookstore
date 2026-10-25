@@ -30,6 +30,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   int _pendingCount = 0;
   double _revenue = 0;
   bool _loading = true;
+  bool _statsFailed = false;
   bool _seeding = false;
 
   @override
@@ -39,7 +40,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   }
 
   Future<void> _loadStats() async {
-    setState(() => _loading = true);
+    setState(() {
+      _loading = true;
+      _statsFailed = false;
+    });
     final orders = context.read<OrderProvider>();
     final books = context.read<BookProvider>();
 
@@ -59,6 +63,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       });
     } catch (_) {
       if (mounted) {
+        setState(() => _statsFailed = true);
         SnackbarHelper.showError(
           context,
           'Could not load dashboard statistics.',
@@ -216,7 +221,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   ),
                   Gaps.xs,
                   Text(
-                    _loading ? '—' : Formatters.price(_revenue),
+                    _loading || _statsFailed
+                        ? '—'
+                        : Formatters.price(_revenue),
                     style: theme.textTheme.headlineMedium?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w900,
@@ -228,8 +235,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
             Gaps.md,
 
             // ── Stat grid ──
-            GridView.count(
-              crossAxisCount: 2,
+            GridView.extent(
+              maxCrossAxisExtent: 240,
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               crossAxisSpacing: AppSizes.sm,
@@ -239,19 +246,19 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                 _StatCard(
                   icon: Icons.menu_book_rounded,
                   label: 'Books',
-                  value: _loading ? '—' : '$_bookCount',
+                  value: _loading || _statsFailed ? '—' : '$_bookCount',
                   color: AppColors.info,
                 ),
                 _StatCard(
                   icon: Icons.receipt_long_rounded,
                   label: 'Orders',
-                  value: _loading ? '—' : '$_orderCount',
+                  value: _loading || _statsFailed ? '—' : '$_orderCount',
                   color: AppColors.accent,
                 ),
                 _StatCard(
                   icon: Icons.hourglass_top_rounded,
                   label: 'Pending',
-                  value: _loading ? '—' : '$_pendingCount',
+                  value: _loading || _statsFailed ? '—' : '$_pendingCount',
                   color: AppColors.statusPending,
                 ),
                 _StatCard(

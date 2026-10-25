@@ -168,7 +168,7 @@ class _WishlistRow extends StatelessWidget {
                 Text(
                   Formatters.price(item.price),
                   style: theme.textTheme.titleSmall?.copyWith(
-                    color: AppColors.brand,
+                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

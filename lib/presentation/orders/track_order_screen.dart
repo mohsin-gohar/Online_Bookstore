@@ -110,7 +110,9 @@ class _TrackBody extends StatelessWidget {
                     minHeight: 8,
                     backgroundColor: theme.colorScheme.surfaceContainerHighest,
                     valueColor: AlwaysStoppedAnimation(
-                      order.isCancelled ? AppColors.danger : AppColors.brand,
+                      order.isCancelled
+                          ? AppColors.danger
+                          : theme.colorScheme.primary,
                     ),
                   ),
                 ),

@@ -25,15 +25,19 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   int _selectedTab = 0; // 0 = My Orders, 1 = Wishlist
+  String? _ordersUid;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The session may still be restoring when this screen is built from a
+    // deep link, so wait until auth exposes a uid before loading the history.
+    final uid = context.watch<AuthProvider>().uid;
+    if (uid == null || uid == _ordersUid) return;
+    _ordersUid = uid;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final uid = context.read<AuthProvider>().uid;
-      if (uid != null) {
-        context.read<OrderProvider>().loadUserOrders(uid);
-      }
+      if (!mounted) return;
+      context.read<OrderProvider>().loadUserOrders(uid, refresh: true);
     });
   }
 
@@ -52,10 +56,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.person_outline_rounded,
                   size: 64,
-                  color: AppColors.accent,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
                 Gaps.md,
                 Text(
@@ -77,13 +81,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
 
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
     final orders = context.watch<OrderProvider>().orders;
     final wishlist = context.watch<WishlistProvider>();
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.settings_outlined, color: AppColors.accent),
+          icon: Icon(
+            Icons.settings_outlined,
+            color: Theme.of(context).colorScheme.primary,
+          ),
           onPressed: () => context.push(AppRoutes.editProfilePath),
         ),
         title: const Text('Profile'),
@@ -91,7 +100,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             tooltip: 'Settings',
-            icon: const Icon(Icons.tune_rounded, color: AppColors.accent),
+            icon: Icon(
+              Icons.tune_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             onPressed: () => context.push(AppRoutes.editProfilePath),
           ),
         ],
@@ -111,7 +123,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   child: CircleAvatar(
                     radius: 36,
-                    backgroundColor: AppColors.darkSurfaceVariant,
+                    backgroundColor: scheme.surfaceContainerHighest,
                     backgroundImage: user.photoUrl.isNotEmpty
                         ? CachedNetworkImageProvider(user.photoUrl)
                         : null,
@@ -152,10 +164,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _selectedTab == 0
                         ? AppColors.accent
-                        : AppColors.darkSurfaceVariant,
+                        : scheme.surfaceContainerHighest,
                     foregroundColor: _selectedTab == 0
                         ? AppColors.brandDark
-                        : AppColors.grey300,
+                        : scheme.onSurfaceVariant,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -174,10 +186,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: _selectedTab == 1
                         ? AppColors.accent
-                        : AppColors.darkSurfaceVariant,
+                        : scheme.surfaceContainerHighest,
                     foregroundColor: _selectedTab == 1
                         ? AppColors.brandDark
-                        : AppColors.grey300,
+                        : scheme.onSurfaceVariant,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppSizes.radiusPill),
@@ -207,7 +219,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               )
             else
               Card(
-                color: AppColors.darkSurface,
+                color: scheme.surface,
                 child: Column(
                   children: [
                     Container(
@@ -215,9 +227,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         vertical: 10,
                         horizontal: 12,
                       ),
-                      color: AppColors.darkSurfaceVariant,
+                      color: scheme.surfaceContainerHighest,
                       child: Row(
-                        children: const [
+                        children: [
                           Expanded(
                             flex: 2,
                             child: Text(
@@ -225,7 +237,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 12,
-                                color: AppColors.accent,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -236,7 +248,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 12,
-                                color: AppColors.accent,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -247,7 +259,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 12,
-                                color: AppColors.accent,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -259,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
                                 fontSize: 12,
-                                color: AppColors.accent,
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -277,10 +289,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 vertical: 10,
                                 horizontal: 12,
                               ),
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                 border: Border(
                                   bottom: BorderSide(
-                                    color: AppColors.darkSurfaceVariant,
+                                    color: scheme.outlineVariant,
                                   ),
                                 ),
                               ),
@@ -290,10 +302,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     flex: 2,
                                     child: Text(
                                       Formatters.orderNumber(o.id),
-                                      style: const TextStyle(
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: 11,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 11,
+                                          ),
                                     ),
                                   ),
                                   Expanded(
@@ -302,7 +315,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       o.orderDate != null
                                           ? Formatters.date(o.orderDate!)
                                           : 'Recent',
-                                      style: const TextStyle(fontSize: 11),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(fontSize: 11),
                                     ),
                                   ),
                                   Expanded(
@@ -317,10 +331,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     child: Text(
                                       Formatters.price(o.total),
                                       textAlign: TextAlign.right,
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w800,
                                         fontSize: 11,
-                                        color: AppColors.accent,
+                                        color: scheme.primary,
                                       ),
                                     ),
                                   ),
@@ -332,15 +346,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const Divider(height: 1),
                     TextButton.icon(
                       onPressed: () => context.push(AppRoutes.ordersPath),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.receipt_long_outlined,
                         size: 18,
-                        color: AppColors.accent,
+                        color: scheme.primary,
                       ),
-                      label: const Text(
+                      label: Text(
                         'View All Orders',
                         style: TextStyle(
-                          color: AppColors.accent,
+                          color: scheme.primary,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -437,16 +451,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _logout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text(AppStrings.logout),
         content: const Text(AppStrings.logoutConfirm),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => Navigator.pop(dialogContext, false),
             child: const Text(AppStrings.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text(AppStrings.logout),
           ),
         ],

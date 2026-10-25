@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
 import '../../logic/auth_provider.dart';
@@ -104,7 +103,7 @@ class _CartIcon extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
             constraints: const BoxConstraints(minWidth: 18),
             decoration: BoxDecoration(
-              color: AppColors.brand,
+              color: Theme.of(context).colorScheme.primary,
               borderRadius: BorderRadius.circular(9),
               border: Border.all(
                 color: Theme.of(context).colorScheme.surface,
@@ -114,8 +113,8 @@ class _CartIcon extends StatelessWidget {
             child: Text(
               count > 99 ? '99+' : '$count',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onPrimary,
                 fontSize: 10,
                 fontWeight: FontWeight.w700,
                 height: 1.2,

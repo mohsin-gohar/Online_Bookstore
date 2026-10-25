@@ -138,9 +138,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: AppColors.accent.withValues(alpha: 0.3),
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.import_contacts_rounded,
-                      color: AppColors.accent,
+                      color: Theme.of(context).colorScheme.primary,
                       size: 20,
                     ),
                   ),
@@ -258,10 +258,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'BROWSE GENRES',
                       style: TextStyle(
-                        color: AppColors.accent,
+                        color: Theme.of(context).colorScheme.primary,
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
                         letterSpacing: 1.2,
@@ -427,9 +427,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
 
             // ── Section 10: Featured Literary Authors ──
-            const SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(
+                padding: const EdgeInsets.fromLTRB(
                   AppSizes.md,
                   0,
                   AppSizes.md,
@@ -438,7 +438,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Text(
                   'FEATURED AUTHORS',
                   style: TextStyle(
-                    color: AppColors.accent,
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1.2,
@@ -1315,7 +1315,10 @@ class _BadgeItem extends StatelessWidget {
         ),
         Text(
           sub,
-          style: const TextStyle(fontSize: 9, color: AppColors.grey400),
+          style: TextStyle(
+            fontSize: 9,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

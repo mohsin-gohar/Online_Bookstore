@@ -18,6 +18,10 @@ class AdminGuard {
 
   static String? redirect(BuildContext context, dynamic state) {
     final auth = context.read<AuthProvider>();
+    // During session restore we don't know yet whether this is an admin. Send
+    // the user nowhere until /me answers, otherwise a page reload on an admin
+    // URL flashes the login screen and then bounces back.
+    if (auth.status == AuthStatus.unknown) return null;
     if (!auth.isAuthenticated) return AppRoutes.loginPath;
     if (!auth.isAdmin) return AppRoutes.homePath;
     return null; // allowed

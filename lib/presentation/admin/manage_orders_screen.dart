@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
@@ -214,7 +213,7 @@ class _OrderAdminCard extends StatelessWidget {
                 Text(
                   Formatters.price(order.total),
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.brand,
+                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

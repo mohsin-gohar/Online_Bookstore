@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/routes/app_routes.dart';
 import '../../logic/cart_provider.dart';
 
@@ -40,7 +39,7 @@ class CartBadgeButton extends StatelessWidget {
                   ),
                   constraints: const BoxConstraints(minWidth: 18),
                   decoration: BoxDecoration(
-                    color: AppColors.brand,
+                    color: Theme.of(context).colorScheme.primary,
                     borderRadius: BorderRadius.circular(9),
                     border: Border.all(
                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -50,8 +49,8 @@ class CartBadgeButton extends StatelessWidget {
                   child: Text(
                     count > 99 ? '99+' : '$count',
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
                       fontSize: 10,
                       fontWeight: FontWeight.w700,
                       height: 1.2,

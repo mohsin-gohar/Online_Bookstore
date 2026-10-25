@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/routes/app_routes.dart';
@@ -133,54 +132,36 @@ class _MyOrdersScreenState extends State<MyOrdersScreen> {
 class _OrderTableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final labelStyle = TextStyle(
+      fontWeight: FontWeight.w800,
+      fontSize: 13,
+      color: scheme.primary,
+    );
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      color: AppColors.darkSurfaceVariant,
+      color: scheme.surfaceContainerHighest,
       child: Row(
-        children: const [
+        children: [
           Expanded(
             flex: 2,
-            child: Text(
-              'Order #',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 13,
-                color: AppColors.accent,
-              ),
-            ),
+            child: Text('Order #', style: labelStyle),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              'Date',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 13,
-                color: AppColors.accent,
-              ),
-            ),
+            child: Text('Date', style: labelStyle),
           ),
           Expanded(
             flex: 2,
-            child: Text(
-              'Status',
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 13,
-                color: AppColors.accent,
-              ),
-            ),
+            child: Text('Status', style: labelStyle),
           ),
           Expanded(
             flex: 2,
             child: Text(
               'Total',
               textAlign: TextAlign.right,
-              style: TextStyle(
-                fontWeight: FontWeight.w800,
-                fontSize: 13,
-                color: AppColors.accent,
-              ),
+              style: labelStyle,
             ),
           ),
         ],
@@ -199,11 +180,13 @@ class _OrderTableRow extends StatelessWidget {
     final dateStr = order.orderDate != null
         ? Formatters.date(order.orderDate!)
         : 'Recent';
+    final theme = Theme.of(context);
+    final scheme = theme.colorScheme;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.darkSurfaceVariant)),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: scheme.outlineVariant)),
       ),
       child: Row(
         children: [
@@ -211,12 +194,18 @@ class _OrderTableRow extends StatelessWidget {
             flex: 2,
             child: Text(
               Formatters.orderNumber(order.id),
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
           ),
           Expanded(
             flex: 2,
-            child: Text(dateStr, style: const TextStyle(fontSize: 12)),
+            child: Text(
+              dateStr,
+              style: theme.textTheme.bodyMedium?.copyWith(fontSize: 12),
+            ),
           ),
           Expanded(
             flex: 2,
@@ -230,10 +219,10 @@ class _OrderTableRow extends StatelessWidget {
             child: Text(
               Formatters.price(order.total),
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 12,
-                color: AppColors.accent,
+                color: scheme.primary,
               ),
             ),
           ),
