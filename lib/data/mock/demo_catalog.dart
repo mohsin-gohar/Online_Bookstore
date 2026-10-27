@@ -499,7 +499,7 @@ const List<Map<String, dynamic>> demoBooks = <Map<String, dynamic>>[
     'isbn': '9780261102217',
     'publisher': 'HarperCollins',
     'pages': 310,
-    'coverImage': 'https://covers.openlibrary.org/b/isbn/9780261102217-L.jpg',
+    'coverImage': 'https://upload.wikimedia.org/wikipedia/en/4/4a/TheHobbit_FirstEdition.jpg',
   },
   <String, dynamic>{
     'id': 'book_11',
@@ -1199,7 +1199,7 @@ const List<Map<String, dynamic>> demoBooks = <Map<String, dynamic>>[
     'isbn': '9781542019774',
     'publisher': 'Amazon Original',
     'pages': 68,
-    'coverImage': 'https://covers.openlibrary.org/b/isbn/9781542019774-L.jpg',
+    'coverImage': 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
   },
   <String, dynamic>{
     'id': 'book_46',

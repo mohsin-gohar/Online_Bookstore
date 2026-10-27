@@ -15,7 +15,7 @@ import '../../logic/theme_provider.dart';
 import '../../logic/wishlist_provider.dart';
 import 'orders/widgets/order_status_chip.dart';
 
-/// Luxury Profile Screen matching Screen 5 in reference design.
+/// User profile screen showing personal details, past orders, and saved wishlist items.
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 

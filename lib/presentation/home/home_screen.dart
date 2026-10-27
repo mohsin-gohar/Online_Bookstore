@@ -18,7 +18,6 @@ import '../../../logic/book_provider.dart';
 import '../../../logic/cart_provider.dart';
 import '../../../logic/notification_provider.dart';
 import '../../../logic/wishlist_provider.dart';
-import '../book_details/widgets/audio_sample_sheet.dart';
 import '../book_details/widgets/book_sample_reader_sheet.dart';
 import '../common_widgets/book_card.dart';
 import '../common_widgets/book_cover_image.dart';
@@ -27,8 +26,7 @@ import '../common_widgets/section_header.dart';
 import '../common_widgets/shimmer_skeleton.dart';
 import 'widgets/home_search_bar.dart';
 
-/// Ultra-Premium, Luxury Bookstore Home Screen.
-/// Designed according to world-class bookstore standards (Kindle, Barnes & Noble, Audible).
+/// Home screen displaying featured books, categories, bestsellers, and promotions.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -111,7 +109,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final trendingBooks = allLoadedBooks.length > 4
         ? allLoadedBooks.sublist(min(3, allLoadedBooks.length))
         : allLoadedBooks;
-    final audioBooks = allLoadedBooks.reversed.take(6).toList();
 
     return Scaffold(
       body: RefreshIndicator(
@@ -119,7 +116,6 @@ class _HomeScreenState extends State<HomeScreen> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            // ── Premium Luxury App Bar ──
             SliverAppBar(
               floating: true,
               pinned: true,
@@ -148,42 +144,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            AppStrings.appName.toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: 'Georgia',
-                              fontWeight: FontWeight.w900,
-                              fontSize: 16,
-                              letterSpacing: 1.5,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            ),
-                          ),
-                          Gaps.xxs,
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 5,
-                              vertical: 1,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColors.accent,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            child: const Text(
-                              'EDITION',
-                              style: TextStyle(
-                                fontSize: 9,
-                                fontWeight: FontWeight.w900,
-                                color: AppColors.brandDark,
-                                letterSpacing: 0.8,
-                              ),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        AppStrings.appName.toUpperCase(),
+                        style: TextStyle(
+                          fontFamily: 'Georgia',
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                          letterSpacing: 1.5,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       Text(
-                        'Welcome, $userName ✨',
+                        'Welcome back, $userName',
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w500,
@@ -408,25 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SliverToBoxAdapter(child: Gaps.lg),
             ],
 
-            // ── Section 9: Audiobooks & Audio Previews ──
-            if (audioBooks.isNotEmpty) ...[
-              SliverToBoxAdapter(
-                child: SectionHeader(
-                  title: 'Audiobooks & Audio Samples',
-                  actionLabel: 'Listen All',
-                  onAction: () => context.go(AppRoutes.catalogPath),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: _AudiobooksSpotlightSection(
-                  books: audioBooks,
-                  onPreviewAudio: (b) => AudioSampleSheet.show(context, b),
-                ),
-              ),
-              const SliverToBoxAdapter(child: Gaps.lg),
-            ],
-
-            // ── Section 10: Featured Literary Authors ──
+            // ── Featured Authors ──
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(
@@ -1897,169 +1851,7 @@ class _TrendingGridSection extends StatelessWidget {
 }
 
 // ──────────────────────────────────────────────
-// 11. Audiobooks & Audio Previews Section
-// ──────────────────────────────────────────────
-class _AudiobooksSpotlightSection extends StatelessWidget {
-  const _AudiobooksSpotlightSection({
-    required this.books,
-    required this.onPreviewAudio,
-  });
-
-  final List<BookModel> books;
-  final ValueChanged<BookModel> onPreviewAudio;
-
-  @override
-  Widget build(BuildContext context) {
-    if (books.isEmpty) return const SizedBox.shrink();
-
-    return SizedBox(
-      height: 155,
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(horizontal: AppSizes.md),
-        scrollDirection: Axis.horizontal,
-        itemCount: books.length,
-        separatorBuilder: (_, _) => const SizedBox(width: 14),
-        itemBuilder: (context, i) {
-          final book = books[i];
-          final durations = [
-            '7h 45m',
-            '9h 12m',
-            '6h 30m',
-            '11h 05m',
-            '8h 22m',
-            '10h 15m',
-          ];
-          final duration = durations[i % durations.length];
-
-          return Container(
-            width: 250,
-            padding: const EdgeInsets.all(AppSizes.sm + 2),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF161F38), Color(0xFF0D1322)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-              border: Border.all(
-                color: AppColors.accent.withValues(alpha: 0.3),
-              ),
-            ),
-            child: Row(
-              children: [
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    BookCoverImage(
-                      imageUrl: book.coverImage,
-                      title: book.title,
-                      author: book.author,
-                      width: 75,
-                      height: 105,
-                      fit: BoxFit.cover,
-                      icon: Icons.headphones_rounded,
-                      borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.65),
-                        shape: BoxShape.circle,
-                        border: Border.all(color: AppColors.accent, width: 1.2),
-                      ),
-                      child: const Icon(
-                        Icons.headphones_rounded,
-                        color: AppColors.accent,
-                        size: 18,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                        child: const Text(
-                          '🎧 AUDIO EDITION',
-                          style: TextStyle(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.accent,
-                            letterSpacing: 0.6,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        book.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        duration,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: AppColors.grey400,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      ElevatedButton.icon(
-                        onPressed: () => onPreviewAudio(book),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.accent,
-                          foregroundColor: AppColors.brandDark,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          minimumSize: const Size(0, 26),
-                          visualDensity: VisualDensity.compact,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AppSizes.radiusPill,
-                            ),
-                          ),
-                        ),
-                        icon: const Icon(Icons.play_arrow_rounded, size: 14),
-                        label: const Text(
-                          'Listen',
-                          style: TextStyle(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
-
-// ──────────────────────────────────────────────
-// 12. Reader Stories & Testimonials Carousel
+// Reader Stories & Testimonials Carousel
 // ──────────────────────────────────────────────
 class _ReaderReviewsCarousel extends StatelessWidget {
   const _ReaderReviewsCarousel();

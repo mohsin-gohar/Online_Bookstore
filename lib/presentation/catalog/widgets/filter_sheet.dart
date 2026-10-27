@@ -26,7 +26,7 @@ class FilterResult {
   final bool inStockOnly;
 }
 
-/// A luxury dark navy & gold bottom sheet for filtering and sorting the catalog.
+/// Bottom sheet for filtering and sorting the book catalog.
 class FilterSheet extends StatefulWidget {
   const FilterSheet({
     super.key,

@@ -5,8 +5,7 @@ import '../constants/app_sizes.dart';
 
 /// Material 3 themes for **Bookstore**.
 ///
-/// Luxury Dark Midnight Blue and Warm Sand Gold theme matching the premium
-/// bookstore aesthetic.
+/// Features custom typography and cohesive light and dark color schemes.
 class AppTheme {
   AppTheme._();
 
@@ -32,7 +31,7 @@ class AppTheme {
     shadow: const Color(0x14000000),
   );
 
-  /// Dark theme — luxury Midnight Blue and Warm Sand Gold.
+  /// Dark theme — Midnight Blue and Warm Sand Gold.
   static ThemeData get dark => _base(
     brightness: Brightness.dark,
     scheme: _darkScheme,

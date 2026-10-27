@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_sizes.dart';
 
-/// Ultra-resilient, luxury book cover widget with elegant fallback styling.
+/// Reusable book cover component with network caching and fallback support.
 ///
-/// Prevents red error boxes and broken images under any network condition:
-/// - Handles empty, invalid, or 404 image URLs.
-/// - Shows a refined subtle loading indicator while downloading.
-/// - Renders an authentic hardcover book spine with gold accents and title
-///   when the remote image fails or is unavailable.
+/// Features:
+/// - Cached remote image loading.
+/// - Graceful fallback styling when images are loading or unavailable.
+/// - Support for Hero animations and custom border radiuses.
 class BookCoverImage extends StatelessWidget {
   const BookCoverImage({
     super.key,
@@ -106,14 +105,25 @@ class BookCoverImage extends StatelessWidget {
     final displayTitle = title?.trim() ?? '';
     final displayAuthor = author?.trim() ?? '';
 
+    // Deterministic palette based on title hash so each book has its own distinct cover
+    final palettes = [
+      [const Color(0xFF1E2D54), const Color(0xFF0F172A)], // Classic Navy
+      [const Color(0xFF4A1521), const Color(0xFF1E080D)], // Burgundy Leather
+      [const Color(0xFF1A3828), const Color(0xFF0D1D14)], // Emerald Classic
+      [const Color(0xFF382A1A), const Color(0xFF1D1408)], // Vintage Brown
+      [const Color(0xFF2C1E4A), const Color(0xFF130B24)], // Royal Purple
+      [const Color(0xFF1E3A4A), const Color(0xFF0C1920)], // Teal Slate
+    ];
+    final palette = palettes[displayTitle.hashCode.abs() % palettes.length];
+
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1E2D54), Color(0xFF0F172A)],
+          colors: palette,
         ),
         borderRadius: radius,
         border: Border.all(

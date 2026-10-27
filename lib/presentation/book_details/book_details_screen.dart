@@ -24,12 +24,11 @@ import '../common_widgets/custom_appbar.dart';
 import '../common_widgets/error_state.dart';
 import '../common_widgets/loading_indicator.dart';
 import '../common_widgets/quantity_selector.dart';
-import 'widgets/audio_sample_sheet.dart';
 import 'widgets/book_sample_reader_sheet.dart';
 import 'widgets/review_tile.dart';
 import 'widgets/write_review_sheet.dart';
 
-/// Luxury Book details screen matching Screen 3 in reference design.
+/// Displays comprehensive book information, reviews, and purchase actions.
 class BookDetailsScreen extends StatefulWidget {
   const BookDetailsScreen({super.key, required this.bookId});
 
@@ -337,36 +336,6 @@ class _BookDetailsScreenState extends State<BookDetailsScreen> {
                   ),
                   label: Text(
                     'Read Sample',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.primary.withValues(alpha: 0.5),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 8,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSizes.radiusPill),
-                    ),
-                  ),
-                ),
-                Gaps.hSm,
-                OutlinedButton.icon(
-                  onPressed: () => AudioSampleSheet.show(context, book),
-                  icon: Icon(
-                    Icons.headphones_rounded,
-                    color: Theme.of(context).colorScheme.primary,
-                    size: 18,
-                  ),
-                  label: Text(
-                    'Audio Sample',
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.primary,
                       fontWeight: FontWeight.bold,

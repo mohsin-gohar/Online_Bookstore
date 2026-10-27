@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 /// Centralised colour palette for the **Bookstore** app.
 ///
-/// Luxury Dark Midnight Blue and Warm Sand Gold palette matching the premium
-/// bookstore aesthetic.
+/// Dark Midnight Blue and Warm Sand Gold palette for the bookstore theme.
 class AppColors {
   AppColors._();
 

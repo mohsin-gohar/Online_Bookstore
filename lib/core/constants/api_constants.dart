@@ -70,10 +70,10 @@ class ApiConstants {
 
   /// Default for the current platform when nothing is overridden.
   static String get _platformDefaultBaseUrl {
-    if (kIsWeb) return 'http://127.0.0.1:8000/api';
+    if (kIsWeb) return 'http://127.0.0.1:8001/api';
     return defaultTargetPlatform == TargetPlatform.android
-        ? 'http://10.0.2.2:8000/api'
-        : 'http://127.0.0.1:8000/api';
+        ? 'http://10.0.2.2:8001/api'
+        : 'http://127.0.0.1:8001/api';
   }
 
   /// The API root, **without** a trailing slash.
